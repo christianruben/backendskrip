@@ -1,59 +1,59 @@
 const express = require('express');
 const route = express.Router();
-const bodyParser = require('body-parser');
-route.use(bodyParser.urlencoded({extended: false}));
-route.use(bodyParser.json());
+const verifyToken = require('../verification');
 
-route.get('/student', (req, res, next)=>{
+route.get('/student', verifyToken, (req, res, next)=>{
     /**
      * get schedule student list
      */
 });
 
-route.get('/teacher', (req, res, next)=>{
+route.get('/teacher', verifyToken, (req, res, next)=>{
     /**
      * get schedule teacher list
      */
 });
 
-route.get('/student/class/:id', (req, res, next)=>{
+route.get('/student/class/:id', verifyToken, (req, res, next)=>{
     /**
      * get schedule student by class
      */
 });
 
-route.post('/student', (req, res, next)=>{
+route.post('/student', verifyToken, (req, res, next)=>{
     /**
      * create schedule student
      */
 });
 
-route.post('/teacher', (req, res, next)=>{
+route.post('/teacher', verifyToken, (req, res, next)=>{
     /**
      * create schedule teacher
      */
 });
 
-route.delete('/student', (req, res, next)=>{
+route.delete('/student', verifyToken, (req, res, next)=>{
     /**
      * delete schedule student
      */
 });
 
-route.delete('/teacher', (req, res, next)=>{
+route.delete('/teacher', verifyToken, (req, res, next)=>{
     /**
      * delete schedule teacher
      */
 });
 
-route.put('/student', (req, res, next)=>{
+route.put('/student', verifyToken, (req, res, next)=>{
     /**
      * update schedule student
      */
 });
 
-route.put('/teacher', (req, res, next)=>{
+route.put('/teacher', verifyToken, (req, res, next)=>{
     /**
      * update schedule teacher
      */
 });
+
+module.exports = route;

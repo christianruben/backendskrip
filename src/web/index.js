@@ -5,8 +5,11 @@ route.get('/', (req, res, next)=>{
     /**
      * 
      */
+    res.status(200).send('<h1>Hello world</h1>');
 });
 
 route.get('/admin', (req, res, next)=>{
-
+    res.status(200).send("<h1>Admin</h1>");
 });
+
+module.exports = route;

@@ -1,35 +1,35 @@
 const express = require('express');
 const route = express.Router();
-const bodyParser = require('body-parser');
-route.use(bodyParser.urlencoded({extended: false}));
-route.use(bodyParser.json());
+const verifyToken = require('../verification');
 
-route.get('/', (req, res, next)=>{
+route.get('/', verifyToken, (req, res, next)=>{
     /**
      * get study list
      */
 });
 
-route.get('/:id', (req, res, next)=>{
+route.get('/:id', verifyToken, (req, res, next)=>{
     /**
      * get study detail
      */
 });
 
-route.post('/', (req, res, next)=>{
+route.post('/', verifyToken, (req, res, next)=>{
     /**
      * update study information
      */
 });
 
-route.delete('/', (req, res, next)=>{
+route.delete('/', verifyToken, (req, res, next)=>{
     /**
      * delete study
      */
 });
 
-route.put('/', (req, res, next)=>{
+route.put('/', verifyToken, (req, res, next)=>{
     /**
      * update study
      */
 });
+
+module.exports = route;

@@ -1,25 +1,25 @@
 const express = require('express');
 const route = express.Router();
-const bodyParser = require('body-parser');
-route.use(bodyParser.urlencoded({extended: false}));
-route.use(bodyParser.json());
+const verifyToken = require('../verification');
 
-route.get('/', (req, res, next)=>{
+route.get('/', verifyToken, (req, res, next)=>{
     // get list news
 });
 
-route.get('/:id', (req, res, next)=>{
+route.get('/:id', verifyToken, (req, res, next)=>{
     // get detail news
 });
 
-route.post('/', (req, res, next)=>{
+route.post('/', verifyToken, (req, res, next)=>{
     // craete news
 });
 
-route.delete('/', (req, res, next)=>{
+route.delete('/', verifyToken, (req, res, next)=>{
     // delete news
 });
 
-route.put('/:id', (req, res, next)=>{
+route.put('/', verifyToken, (req, res, next)=>{
     // update news
 });
+
+module.exports = route;

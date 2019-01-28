@@ -21,3 +21,5 @@ route.post('/login', (req, res, next)=>{
 route.get('/logout', (req, res, next)=>{
     res.status(200).send({auth: false, token: null});
 });
+
+module.exports = route;
