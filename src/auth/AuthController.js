@@ -21,4 +21,10 @@ route.get('/logout', (req, res, next)=>{
     res.status(200).send({auth: false, token: null});
 });
 
+route.post('/token', (req, res, next)=>{
+    /**
+     * refresh token
+     */
+});
+
 module.exports = route;
