@@ -19,7 +19,7 @@ route.delete('/', verifyToken, (req, res, next)=>{
 });
 
 route.put('/', verifyToken, (req, res, next)=>{
-    // update news
+    // update newst
 });
 
 module.exports = route;
