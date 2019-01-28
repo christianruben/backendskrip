@@ -6,30 +6,36 @@ route.use(bodyParser.json());
 
 route.get('/', (req, res, next)=>{
     /**
-     * get study list
+     * get exam list
+     */
+});
+
+route.get('/class/:id', (req, res, next)=>{
+    /**
+     * get exam for one class
      */
 });
 
 route.get('/:id', (req, res, next)=>{
     /**
-     * get study detail
+     * get exam detail
      */
 });
 
 route.post('/', (req, res, next)=>{
     /**
-     * update study information
+     * create exam information
      */
 });
 
 route.delete('/', (req, res, next)=>{
     /**
-     * delete study
+     * delete exam information
      */
 });
 
 route.put('/', (req, res, next)=>{
     /**
-     * update study
+     * update exam information
      */
 });

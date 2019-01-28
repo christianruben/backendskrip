@@ -5,31 +5,21 @@ route.use(bodyParser.urlencoded({extended: false}));
 route.use(bodyParser.json());
 
 route.get('/', (req, res, next)=>{
-    /**
-     * get study list
-     */
+    // get list news
 });
 
 route.get('/:id', (req, res, next)=>{
-    /**
-     * get study detail
-     */
+    // get detail news
 });
 
 route.post('/', (req, res, next)=>{
-    /**
-     * update study information
-     */
+    // craete news
 });
 
 route.delete('/', (req, res, next)=>{
-    /**
-     * delete study
-     */
+    // delete news
 });
 
-route.put('/', (req, res, next)=>{
-    /**
-     * update study
-     */
+route.put('/:id', (req, res, next)=>{
+    // update news
 });

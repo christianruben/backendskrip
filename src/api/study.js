@@ -10,6 +10,12 @@ route.get('/', (req, res, next)=>{
      */
 });
 
+route.get('/class/:id', (req, res, next)=>{
+    /**
+     * get study list from one class
+     */
+});
+
 route.get('/:id', (req, res, next)=>{
     /**
      * get study detail

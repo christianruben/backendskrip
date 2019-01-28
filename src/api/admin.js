@@ -5,29 +5,37 @@ route.use(bodyParser.urlencoded({extended: false}));
 route.use(bodyParser.json());
 
 route.get('/', (req, res, next)=>{
-    // get all list student
+    /**
+     * get list of admin
+     */
 });
 
 route.get('/:id', (req, res, next)=>{
-    // get student by his id
-});
-
-route.get('/class/:id', (req, res, next)=>{
-    // get list student by class id
+    /**
+     * get admin detail
+     */
 });
 
 route.post('/', (req, res, next)=>{
-    // create student data
+    /**
+     * create admin
+     */
 });
 
-route.delete('/:id', (req, res, next)=>{
-    // delete student
+route.delete('/', (req, res, next)=>{
+    /**
+     * delete admin
+     */
 });
 
-route.put('/', (req, res, next)=>{
-    // update student
+route.put('/:id', (req, res, next)=>{
+    /**
+     * update admin
+     */
 });
 
 route.put('/picture/:id', (req, res, next)=>{
-    // update picture
+    /**
+     * update admin picture
+     */
 });
