@@ -80,14 +80,24 @@ export default class{
         });
     }
 
-    listAccount({search, sortby, sort, rows}, callback){
-        connection.query(`SELECT * FROM ${table} WHERE `, [], (err, results, fields)=>{
-            if(err) {
-                console.error(err);
-                throw err;
-            }
-            callback(results, fields);
-        });
+    listAccount({search, sortby, sort, index, rows}, callback){
+        if(search.trim().length > 0){
+            connection.query(`SELECT * FROM ${table} WHERE username = ? ORDER BY ${sortby} ${sort} LIMIT ${index},${rows}`, [search], (err, results, fields)=>{
+                if(err) {
+                    console.error(err);
+                    throw err;
+                }
+                callback(results, fields);
+            });
+        }else{
+            connection.query(`SELECT * FROM ${table} ORDER BY ${sortby} ${sort} LIMIT ${index},${rows}`, (err, results, fields)=>{
+                if(err) {
+                    console.error(err);
+                    throw err;
+                }
+                callback(results, fields);
+            });
+        }
     }
 
     Auth({username, password}, callback){

@@ -11,7 +11,7 @@ export default class {
     }
 
     CreateAdmin({firstname, secondname, username, password, image, phonenumber, email}, callback){
-
+        
     }
 
     UpdateAdmin({id, firstname, secondname, username, password, phonenumber, email}, callback){
