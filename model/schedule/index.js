@@ -13,7 +13,7 @@ export default class {
 
     }
 
-    ClassList({orderby, order, rows}, callback){
+    ClassList({search, orderby, order, rows}, callback){
         
     }
 }
