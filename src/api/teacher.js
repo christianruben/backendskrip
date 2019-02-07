@@ -1,6 +1,17 @@
 const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    filename: (req, file, cb)=>{
+        cb(null, `${file.fieldname}-${Date.now()}`);
+    }
+});
+
+const upload = multer({
+    storage: storage
+}).single('picture');
 
 route.get('/', verifyToken, (req, res, next)=>{
     /**
@@ -49,7 +60,7 @@ route.put('/', verifyToken, (req, res, next)=>{
      * update study
      */
     if(req.admin || req.teacher){
-        
+
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

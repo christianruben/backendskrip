@@ -14,6 +14,10 @@ route.get('/student/:id', verifyToken, (req, res, next)=>{
 
 });
 
+route.get('/me', verifyToken, (req, res, next)=>{
+    
+});
+
 route.post('/', verifyToken, (req, res, next)=>{
     // craete news
     if(req.admin){

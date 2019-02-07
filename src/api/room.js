@@ -31,7 +31,7 @@ route.delete('/', verifyToken, (req, res, next)=>{
 route.put('/', verifyToken, (req, res, next)=>{
     // update news
     if(req.admin){
-
+        
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
