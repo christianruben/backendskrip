@@ -6,42 +6,66 @@ route.get('/',verifyToken, (req, res, next)=>{
     /**
      * get list of admin
      */
-    res.status(200).send("Admin get");
+    if(req.admin){
+        res.status(200).send("Admin get");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.get('/:id',verifyToken, (req, res, next)=>{
     /**
      * get admin detail
      */
-    res.status(200).send("Admin get by id = ");
+    if(req.admin){
+        res.status(200).send("Admin get by id = ");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.post('/',verifyToken, (req, res, next)=>{
     /**
      * create admin
      */
-    res.status(200).send("Admin created");
+    if(req.admin){
+        res.status(200).send("Admin created");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.delete('/',verifyToken, (req, res, next)=>{
     /**
      * delete admin
      */
-    res.status(200).send("Admin deleted");
+    if(req.admin){
+        res.status(200).send("Admin deleted");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.put('/',verifyToken, (req, res, next)=>{
     /**
      * update admin
      */
-    res.status(200).send("Admin updated");
+    if(req.admin){
+        res.status(200).send("Admin updated");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.put('/picture/:id',verifyToken, (req, res, next)=>{
     /**
      * update admin picture
      */
-    res.status(200).send("Admin picture updated");
+    if(req.admin){
+        res.status(200).send("Admin picture updated");
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 module.exports = route;

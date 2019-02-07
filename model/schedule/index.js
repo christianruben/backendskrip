@@ -1,19 +1,27 @@
 const connection = require('../connection');
 
 export default class {
-    CreateClass({classname}, callback){
+    addSchedule({studyid, teacherid, classid, dayid, timestart, timeend, semesterid, roomid}, callback){
 
     }
 
-    UpdateClass({id, classname}, callback){
+    deleteSchedule({scheduleid}, callback){
 
     }
 
-    DeleteClass({id}, callback){
+    updateSchedule({scheduleid, studyid, teacherid, classid, dayid, timestart, timeend, semesterid, roomid}, callback){
 
     }
 
-    ClassList({search, orderby, order, rows}, callback){
-        
+    getScheduleList({search, sortby, sort, index, rows}, callback){
+
+    }
+
+    getScheduleListByClass({classid, search, sortby, sort, index, rows}, callback){
+
+    }
+
+    getScheduleListByDay({dayid, search, sortby, sort, index, rows}, callback){
+
     }
 }

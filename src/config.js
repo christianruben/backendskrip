@@ -1,3 +1,4 @@
 module.exports = {
-    'secret': 'super'
+    'secret': 'super',
+    'secret_refresh': 'refresh'
 }

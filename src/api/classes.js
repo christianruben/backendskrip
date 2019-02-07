@@ -12,14 +12,29 @@ route.get('/:id', verifyToken, (req, res, next)=>{
 
 route.post('/', verifyToken, (req, res, next)=>{
     // craete news
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.delete('/', verifyToken, (req, res, next)=>{
     // delete news
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.put('/', verifyToken, (req, res, next)=>{
     // update newst
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 module.exports = route;

@@ -24,18 +24,33 @@ route.post('/', verifyToken, (req, res, next)=>{
     /**
      * update study information
      */
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.delete('/', verifyToken, (req, res, next)=>{
     /**
      * delete study
      */
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 route.put('/', verifyToken, (req, res, next)=>{
     /**
      * update study
      */
+    if(req.admin){
+
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
 });
 
 module.exports = route;
