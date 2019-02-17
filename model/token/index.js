@@ -1,7 +1,7 @@
 const connection = require('../connection');
 const util = require('../../util');
 
-export default class{
+class Token{
     insertToken({accessToken, refreshToken}, callback){
         connection.query("INSERT INTO tokenbase(accessToken, refreshToken, datecreated) VALUES(?,?,?)", [accessToken, refreshToken, util.getDateNow()], (err, results)=>{
             if(err){
@@ -42,3 +42,5 @@ export default class{
         });
     }
 }
+
+module.exports = Token;

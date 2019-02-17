@@ -1,6 +1,6 @@
 const connection = require('../connection');
 
-export default class{
+class Class{
     addClass({ classname,teacherid, major}, callback){
 
     }
@@ -17,3 +17,5 @@ export default class{
         
     }
 }
+
+module.exports = Class;

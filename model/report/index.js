@@ -1,6 +1,6 @@
 const connection = require('../connection');
 
-export default class{
+class Report{
     createReport({studyid, teacherid, studentid, report, note}, callback){
         
     }
@@ -25,3 +25,5 @@ export default class{
         
     }
 }
+
+module.exports = Report;

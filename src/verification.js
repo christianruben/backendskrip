@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const config = require('./config');
-const tokenbase = require('../model/token');
+
+const token = require('../model/token');
+
+const tkn = new token();
+
 
 async function createToken(data, pass){
     let accessToken = jwt.sign(data, config.secret, {

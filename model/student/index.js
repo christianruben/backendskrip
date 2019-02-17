@@ -1,7 +1,7 @@
 const connection = require('../connection');
 const util = require('../../util');
 
-export default class{
+class Student{
     InsertStudent({firstname, secondname, born, bornplace, fathername, mothername, address, photo}, callback){
         connection.query(`INSERT INTO ${table}() VALUES(?,?,?,?,?,?,?,?,?)`, [firstname, secondname, born, bornplace, fathername, mothername, address, photo, util.getDateNow()], (err, results)=>{
             if(err){
@@ -62,3 +62,5 @@ export default class{
         }
     }
 }
+
+module.exports = Student;

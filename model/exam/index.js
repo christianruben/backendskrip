@@ -1,6 +1,6 @@
 const connection = require('../connection');
 
-export default class {
+class Exam{
     createExam({study, date, timestart, timeend, detail, room, cls, watcher}, callback){
 
     }
@@ -21,3 +21,5 @@ export default class {
 
     }
 }
+
+module.exports = Exam;

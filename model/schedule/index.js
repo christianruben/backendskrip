@@ -1,6 +1,6 @@
 const connection = require('../connection');
 
-export default class {
+class Schedule{
     addSchedule({studyid, teacherid, classid, dayid, timestart, timeend, semesterid, roomid}, callback){
 
     }
@@ -25,3 +25,5 @@ export default class {
 
     }
 }
+
+module.exports = Schedule;

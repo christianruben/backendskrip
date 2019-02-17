@@ -1,6 +1,6 @@
 const connection = require('../connection');
 
-export default class {
+class Admin{
     constructor(){}
 
     Auth(username, password, callback){
@@ -30,3 +30,5 @@ export default class {
         
     }
 }
+
+module.exports = Admin;

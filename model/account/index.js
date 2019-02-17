@@ -1,7 +1,7 @@
 const connection = require('../connection');
 const util = require('../../util');
 
-export default class{
+class Account{
     createAccount({idAccount, typeAccount, levelAccount, username, password, status}, callback){
         connection.query(`SELECT username, idAccount FROM ${table} WHERE username = ? OR AccountID = ?`, [username, idAccount], (err, results, fields)=>{
             if(err){
@@ -118,3 +118,5 @@ export default class{
         }
     }
 }
+
+module.exports = Account;
