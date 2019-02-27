@@ -58,7 +58,7 @@ route.delete('/teacher', verifyToken, (req, res, next)=>{
      * delete schedule teacher
      */
     if(req.admin){
-
+        
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

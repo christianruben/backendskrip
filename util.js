@@ -1,4 +1,9 @@
 const crypt = require('bcryptjs');
+const cpto = require('crypto');
+
+function randomValHex(len){
+    return cpto.randomBytes(Math.ceil(len/2)).toString('hex').slice(0, len);
+}
 
 function getDateNow(){
     let d = new Date();
@@ -37,16 +42,23 @@ function passEncrypt(plainPassword){
 }
 
 function passValidate(hashPass, plainPass, cb){
-    crypt.compare(plainPass, hashPass, (err, result)=>{
+    let result = {
+        status: 0
+    }
+    crypt.compare(plainPass, hashPass, (err, res)=>{
         if(err){
-            console.error(err);
-            throw err;
+            cb(false)
         }
-        cb(result);
+        if(res){
+            cb(res);
+        }else{
+            cb(res);
+        }
     });
 }
 
 module.exports = {
+    randomValHex,
     getDateNow,
     getTimeNow,
     passEncrypt,

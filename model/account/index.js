@@ -1,122 +1,224 @@
 const connection = require('../connection');
 const util = require('../../util');
 
-class Account{
-    createAccount({idAccount, typeAccount, levelAccount, username, password, status}, callback){
-        connection.query(`SELECT username, idAccount FROM ${table} WHERE username = ? OR AccountID = ?`, [username, idAccount], (err, results, fields)=>{
-            if(err){
-                console.log(err);
-                throw err;
+function createAccount({idowner, level, username, password, picture}, callback){
+    let datenow = util.getDateNow();
+    let hashpass = util.passEncrypt(password);
+    let result = {
+        status: 0,
+        err: "Username yang dimasukan sudah terdaftar"
+    }
+    connection.execute(`SELECT user_id FROM user WHERE username = ?`, [username], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan pada server"
             }
-            if(results.length <= 0){
-                connection.query(`INSERT INTO ${table} () VALUES(?,?,?,?,?,?,?)`, 
-                                [idAccount, typeAccount, levelAccount, username, util.passEncrypt(password), status, util.getDateNow()],
-                                (err, results)=>{
-                                    if(err){
-                                        console.error(err);
-                                        return;
-                                    }
-                                    callback(true, results);
-                                });
+            callback(result);
+        }else{
+            if(res.length > 0){
+                callback(result);
             }else{
-                callback(false, {msg:"This account is already created"});
-            }
-        });
-    }
-
-    updateAccountPasswordByAdmin({id, password}, callback){
-        connection.query(`UPDATE ${table} SET password = ? WHERE id = ?`, [password, id], (err, results)=>{
-            if(err){
-                console.error(err);
-                throw err;
-            }
-            callback(results.affectedRows);
-        });
-    }
-
-    updateAccountPassword({id, oldPassword, password}, callback){
-        connection.query(`SELECT password ${table} WHERE ids = ?`, [id], (err, results, fields)=>{
-            if(err){
-                console.error(err);
-                throw err;
-            }
-            if(results.length > 0){
-                util.passValidate(results[0].password, oldPassword, (result)=>{
-                    if(result){
-                        connection.query(`UPDATE ${table} SET password = ? WHERE id = ?`, [password, id], (err, results)=>{
-                            if(err){
-                                console.error(err);
-                                throw err;
-                            }
-                            callback(true, results.affectedRows);
-                        });
+                connection.execute('INSERT INTO user(owner_id, level, username, password, picture, datecreate) VALUES(?, ?, ?, ?, ?, ?)', [idowner, level, username, hashpass, picture, datenow], (err, res)=> {
+                    if(err){
+                        result = {
+                            status: -1,
+                            err: "Terjadi kesalahan pada server"
+                        }
+                        callback(result);
                     }else{
-                        callback(false, {msg: "Cannot update account"});
+                        if(res.affectedRows > 0){
+                            result = {
+                                status: 1,
+                                err: null
+                            }
+                            callback(result);
+                        }else{
+                            result = {
+                                status: 0,
+                                err: "Terjadi kesalahan, data tidak berhasil disimpan"
+                            }
+                            callback(result);
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
+
+function Auth(username, password, callback){
+    let result = {
+        status: 0,
+        err: "akun tidak dapat di temukan"
+    }
+    connection.execute('SELECT * FROM tbl_admin WHERE username = ?', [username], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan pada server"
+            }
+            callback(result);
+        }else{
+            if(res.length > 0){
+                let hashpass = res[0].password;
+                util.passValidate(hashpass, password, (stat)=>{
+                    if(stat){
+                        result = {
+                            status: 1,
+                            err: null,
+                            data: {
+                                id: res[0].user_id,
+                                ownid: res[0].owner_id,
+                                level: res[0].level
+                            }
+                        }
+                        callback(result);
+                    }else{
+                        result = {
+                            status: 0,
+                            err: "username dan password tidak cocok "
+                        }
+                        callback(result);
                     }
                 });
             }else{
-                callback(false, {msg: "Account is not finded, update failed"});
+                callback(result);
             }
-        });
-    }
-
-    updateAccount({id,levelAccount, username, status}, callback){
-        connection.query(`UPDATE ${table} SET WHERE`, [], (err, results)=>{
-            if(err){
-                console.error(err);
-                throw err;
-            }
-            callback(results.affectedRows);
-        });
-    }
-
-    deleteAccount({id}, callback){
-        connection.query(`DELETE FROM ${table} WHERE `, [], (err, results)=>{
-            if(err){
-                console.error(err);
-                throw err;
-            }
-            callback(results.affectedRows);
-        });
-    }
-
-    listAccount({search, sortby, sort, index, rows}, callback){
-        if(search.trim().length > 0){
-            connection.query(`SELECT * FROM ${table} WHERE username = ? ORDER BY ${sortby} ${sort} LIMIT ${index},${rows}`, [search], (err, results, fields)=>{
-                if(err) {
-                    console.error(err);
-                    throw err;
-                }
-                callback(results, fields);
-            });
-        }else{
-            connection.query(`SELECT * FROM ${table} ORDER BY ${sortby} ${sort} LIMIT ${index},${rows}`, (err, results, fields)=>{
-                if(err) {
-                    console.error(err);
-                    throw err;
-                }
-                callback(results, fields);
-            });
         }
-    }
+    });
+}
 
-    Auth({username, password}, callback){
-        if(username.trim().length > 0 && password.trim().length > 0){
-            connection.query(`SELECT AccountType, AccountLevel FROM ${table} WHERE username = ? AND password = ?`, [username, password], (err, results, fields)=>{
-                if(err){
-                    console.error(err);
-                    throw err;
-                }
-                if(results.length > 0){
-                    callback({status: true, message: 'account match', data: {}});
-                }else{
-                    callback({status: false, message: 'username or password is not match, please fill field correctly'});
-                }
-            });
+function update({id, username}, callback){
+    let result = {
+        status: 0,
+        err: "Username yang dimasukan sudah terdaftar"
+    }
+    connection.execute(`SELECT user_id FROM user WHERE username = ?`, [username], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan pada server"
+            }
+            callback(result);
         }else{
-            callback({status: false, message: "username or password is empty, please fill field"});
+            if(res.length > 0){
+                callback(result);
+            }else{
+                connection.execute(`UPDATE user SET username = ? WHERE user_id = ?`, [username, id], (err, res)=> {
+                    if(err){
+                        result = {
+                            status: -1,
+                            err: "Terjadi kesalahan pada server"
+                        }
+                        callback(result);
+                    }else{
+                        if(res.affectedRows > 0){
+                            result = {
+                                status: 1,
+                                err: null
+                            }
+                            callback(result);
+                        }else{
+                            result = {
+                                status: 0,
+                                err: "Terjadi kesalahan, data tidak berhasil di perbaharui"
+                            }
+                            callback(result);
+                        }
+                    }
+                });
+            }
         }
+    });
+}
+
+function updatePicture({id, picture}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, gagal perbaharui photo"
+    }
+    connection.execute(`UPDATE user SET picture = ? WHERE user_id = ?`, [picture, id], (err, res)=> {
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan pada server"
+            }
+            callback(result);
+        }else{
+            if(res.affectedRows > 0){
+                result = {
+                    status: 1,
+                    err: null
+                }
+                callback(result);
+            }else{
+                callback(result);
+            }
+        }
+    });
+}
+
+function deleteAccount({id}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, gagal menghapus"
+    }
+    connection.execute(`DELETE FROM user WHERE user_id IN(?)`, [id], (err, res)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan pada server"
+            }
+            callback(result);
+        }else{
+            if(res.affectedRows > 0){
+                result = {
+                    status: 1,
+                    err: null
+                }
+                callback(result);
+            }else{
+                callback(result);
+            }
+        }
+    });
+}
+
+function listAccountTeacher({search, orderby, order, index, len}, callback){
+    if(search.trim().length > 0){
+        let src = `%${search}%`;
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+    }else{
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
-module.exports = Account;
+function listAccountStudent({search, orderby, order, index, len}, callback){
+    if(search.trim().length > 0){
+        let src = `%${search}%`;
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_student as tt WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+    }else{
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_student as tt ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+function getAccountTeacher({id}, callback){
+    connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u JOIN tbl_teacher WHERE u.user_id = ?`, [id], callback);
+}
+
+function getAccountStudent({id}, callback){
+    connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u JOIN tbl_student WHERE u.user_id = ?`, [id], callback);
+}
+
+module.exports = {
+    createAccount,
+    Auth,
+    update,
+    updatePicture,
+    deleteAccount,
+    listAccountTeacher,
+    listAccountStudent,
+    getAccountStudent,
+    getAccountTeacher
+};

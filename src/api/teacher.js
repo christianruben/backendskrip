@@ -4,14 +4,15 @@ const verifyToken = require('../verification');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images/uploads');
+    },
     filename: (req, file, cb)=>{
-        cb(null, `${file.fieldname}-${Date.now()}`);
+        cb(null, `${file.fieldname}-${Date.now()}.jpg`);
     }
 });
 
-const upload = multer({
-    storage: storage
-}).single('picture');
+let upload = multer({storage: storage});
 
 route.get('/', verifyToken, (req, res, next)=>{
     /**
