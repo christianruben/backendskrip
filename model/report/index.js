@@ -1,29 +1,48 @@
 const connection = require('../connection');
+const util = require('../../util');
 
-class Report{
-    createReport({studyid, teacherid, studentid, report, note}, callback){
-        
+function createReport({student_id, teacher_id, abs, hw, mid, sem, semester_id, study_id}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, nilai tidak tersimpan"
     }
-
-    deleteReport({reportid}, callback){
-
-    }
-
-    updateReport({reportid, studyid, studentid, report, note}, callback){
-
-    }
-
-    listReportByStudent({studentid, search, sortby, sort, index, rows}, callback){
-
-    }
-
-    listReportByStudy({studyid, search, sortby, sort, index, rows}, callback){
-
-    }
-
-    listReportByTeacher({teacherid, search, sortby, sort, index, rows}, callback){
-        
-    }
+    connection.execute(`SELECT * FROM tbl_val_report WHERE student_id = ? AND teacher_id = ? AND study_id = ? AND semester_id = ?`, [student_id, teacher_id, study_id, semester_id], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi Kesalahan pada server"
+            }
+            callback(result);
+        }else{
+            if(res.length > 0){
+                result = {
+                    status: 0,
+                    err: "nilai murid sudah terisi"
+                }
+                callback(result);
+            }else{
+                connection.execute(`INSERT INTO tbl_val_report(student_id, teacher_id, absensi, homework, mid_semester, semester, semester_id, study_id, datecreated) VALUES(?,?,?,?,?,?,?,?,?,?)`, [student_id, teacher_id, abs, hw, mid, sem, semester_id, study_id, util.getDateNow()], (err, res)=>{
+                    if(err){
+                        result = {
+                            status: -1,
+                            err: "Terjadi Kesalahan pada server"
+                        }
+                        callback(result);
+                    }else{
+                        if(res.affectedRows > 0){
+                            result = {
+                                status: 1,
+                                err: null
+                            }
+                            callback(result);
+                        }else{ 
+                            callback(result);
+                        }
+                    }
+                });
+            }
+        }
+    });
 }
 
 module.exports = Report;
