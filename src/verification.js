@@ -9,9 +9,25 @@ function verifyToken(req, res, next){
         if(err) {
             return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
         }
-        req.userType = decoded.type;
-        req.userId = decoded.id;
-        req.userLevel = decoded.level;
+        req.admin        = null;
+        req.teacher      = null;
+        req.student      = null;
+        req.userId       = decoded.id;
+        req.ownId        = decoded.owner;
+        switch(decoded.level){
+            case 1:
+                req.student = true;
+            break;
+            case 2:
+                req.teacher = true;
+            break;
+            case 3:
+                req.admin = true;
+            break;
+            default:
+                // nothing
+            break;
+        }
         next();
     });
 }
