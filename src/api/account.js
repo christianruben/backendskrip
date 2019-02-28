@@ -14,6 +14,7 @@ route.get('/', verifyToken, (req, res, next)=>{
 
 route.get('/teacher/:id', verifyToken, (req, res, next)=>{
     // get detail news
+    
 });
 
 route.get('/student/:id', verifyToken, (req, res, next)=>{
