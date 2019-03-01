@@ -1,21 +1,137 @@
 const connection = require('../connection');
+const util = require('../../util');
 
-class Study{
-    addStudy({}, callback){
-
+function createStudy({study_name, study_code}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, gagal menyimpan"
     }
+    connection.execute(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan dalam server"
+            }
+            callback(result);
+        }else{
+            if(res.length > 0){
+                result = {
+                    status: 0,
+                    err: "kode pelajaran sudah terdaftar"
+                }
+                callback(result);
+            }else{
+                connection.execute(`INSERT INTO tbl_study(study_name, study_code, datecreated) VALUES(?,?,?)`, [study_name, study_code, util.getDateNow()], (err, res)=>{
+                    if(err){
+                        result = {
+                            status: -1,
+                            err: "Terjadi kesalahan dalam server"
+                        }
+                        callback(result);
+                    }else{
+                        if(res.affectedRows > 0){
+                            result = {
+                                status: 1,
+                                err: null
+                            }
+                            callback(result);
+                        }else{
+                            callback(result);
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
 
-    deleteStudy({}, callback){
-
+function updateStudy({study_name, study_code, id}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, gagal memperbaharui"
     }
+    connection.execute(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (err, res, field)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan dalam server"
+            }
+            callback(result);
+        }else{
+            if(res.length > 0){
+                result = {
+                    status: 0,
+                    err: "kode pelajaran sudah terdaftar"
+                }
+                callback(result);
+            }else{
+                connection.execute(`UPDATE tbl_study SET study_name = ?, study_code = ? WHERE study_id = ?`, [study_name, study_code, id], (err, res)=>{
+                    if(err){
+                        result = {
+                            status: -1,
+                            err: "Terjadi kesalahan dalam server"
+                        }
+                        callback(result);
+                    }else{
+                        if(res.affectedRows > 0){
+                            result = {
+                                status: 1,
+                                err: null
+                            }
+                            callback(result);
+                        }else{
+                            callback(result);
+                        }
+                    }
+                });
+            }
+        }
+    });
+}
 
-    updateStudy({}, callback){
-
+function deleteStudy({id}, callback){
+    let result = {
+        status: 0,
+        err: "Terjadi kesalahan, gagal menghapus"
     }
+    connection.execute(`DELETE FROM tbl_study WHERE study_id IN(?)`, [id], (err, res)=>{
+        if(err){
+            result = {
+                status: -1,
+                err: "Terjadi kesalahan dalam server"
+            }
+            callback(result);
+        }else{
+            if(res.affectedRows > 0){
+                result = {
+                    status: 1,
+                    err: null
+                }
+                callback(result);
+            }else{
+                callback(result);
+            }
+        }
+    });
+}
 
-    getStudyList({search, sortby, sort, index, rows}, callback){
-
+function listStudy({search, orderby, order, index, len}, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT * FROM tbl_study WHERE study_name LIKE N? OR study_code LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+    }else{
+        connection.execute(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
-module.exports = Study;
+function getStudy({id}, callback){
+    connection.execute(`SELECT * FROM tbl_study WHERE study_id = ?`, [id], callback);
+}
+
+module.exports = {
+    createStudy,
+    updateStudy,
+    deleteStudy,
+    listStudy,
+    getStudy
+};

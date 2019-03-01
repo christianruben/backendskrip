@@ -213,6 +213,10 @@ const AdminList = ({search, orderby, order, index, len}, callback)=>{
     }
 }
 
+const getAdmin = ({id}, callback)=>{
+    connection.execute(`SELECT * FROM tbl_admin WHERE admin_id = ?`, [id], callback);
+}
+
 module.exports = {
     Auth,
     CreateAdmin,
@@ -220,5 +224,6 @@ module.exports = {
     UpdateAdminImage,
     UpdateAdminPass,
     DeleteAdmin,
-    AdminList
+    AdminList,
+    getAdmin
 };

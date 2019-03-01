@@ -188,27 +188,27 @@ function deleteAccount({id}, callback){
 function listAccountTeacher({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt ON u.owner_id = tt.teacher_id WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
     }else{
-        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_teacher as tt ON u.owner_id = tt.teacher_id ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
 function listAccountStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_student as tt WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+        connection.execute(`SELECT u.user_id, u.username, u.picture, ts.name FROM user as u INNER JOIN tbl_student as ts ON u.owner_id = ts.student_id WHERE u.username = N? OR tt.name = N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
     }else{
-        connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u INNER JOIN tbl_student as tt ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT u.user_id, u.username, u.picture, ts.name FROM user as u INNER JOIN tbl_student as ts ON u.owner_id = ts.student_id ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
 function getAccountTeacher({id}, callback){
-    connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u JOIN tbl_teacher WHERE u.user_id = ?`, [id], callback);
+    connection.execute(`SELECT u.user_id, u.username, u.picture, tt.name FROM user as u INNER JOIN tbl_teacher as tt ON u.owner_id = tt.teacher_id WHERE u.user_id = ?`, [id], callback);
 }
 
 function getAccountStudent({id}, callback){
-    connection.execute(`SELECT u.user_id, u.username, tt.name FROM user as u JOIN tbl_student WHERE u.user_id = ?`, [id], callback);
+    connection.execute(`SELECT u.user_id, u.username, u.picture, tt.name FROM user as u INNER JOIN tbl_student as ts ON u.owner_id = ts.student_id WHERE u.user_id = ?`, [id], callback);
 }
 
 module.exports = {
