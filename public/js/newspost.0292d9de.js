@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["newspost"],{"37d3":function(n,t,e){"use strict";e.r(t);var s=function(){var n=this,t=n.$createElement,e=n._self._c||t;return e("div",[n._v("\n    Post\n")])},c=[],o=(e("cadf"),e("551c"),e("f751"),e("097d"),{mounted:function(){this.$store.dispatch("header/switchOff")}}),i=o,u=e("2877"),a=Object(u["a"])(i,s,c,!1,null,null,null);t["default"]=a.exports}}]);
+//# sourceMappingURL=newspost.0292d9de.js.map

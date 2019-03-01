@@ -1,6 +1,22 @@
 const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
+const schedule_model = require('../../model/schedule');
+
+route.get('/', (req, res, next)=>{
+    req.admin = true;
+    if(req.admin){
+        schedule_model.listScheduleAll({search: "", orderby: "schedule_id", order: "ASC", index: 0, len: 20}, (err, result, field)=>{
+            if(err){
+                return res.status(500).send({auth: false, msg: "internal server error"});
+            }else{
+                res.status(200).send({auth: true, msg: null, data: result})
+            }
+        });
+    }else{
+        res.status(400).send({auth: false, msg: "authoration failed"});
+    }
+});
 
 route.get('/student', verifyToken, (req, res, next)=>{
     /**

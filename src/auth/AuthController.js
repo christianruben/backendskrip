@@ -2,11 +2,8 @@ const express = require('express');
 const route = express.Router();
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const bodyParser = require('body-parser');
 const admin_model = require('../../model/admin');
 const user_model  = require('../../model/account');
-
-const util = require('../../util');
 
 route.post('/login', (req, res, next)=>{
     let username = req.body.username, password = req.body.password;

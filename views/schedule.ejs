@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+    <head>
+        <title><%= title %></title>
+        <style>
+        @media print 
+            {
+            @page { margin: 0; }
+            body  { margin: 1.6cm; }
+            }
+        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    </head>
+    <body onload="print()">
+      <div>
+        <table class="responsive-table centered">
+            <thead>
+                <tr>
+                    <th>Senin</th>
+                    <th>Selasa</th>
+                    <th>Rabu</th>
+                    <th>Kamis</th>
+                    <th>Jumat</th>
+                </tr>
+            </thead>
+            <tbody>
+                        <% for(let i = 0; i<rows; i++){ %>
+                        <tr>
+                            <td><%= !schedule.senin[i] ? "-" :  schedule.senin[i].study_name %></td>
+                            <td><%= !schedule.selasa[i] ? "-" :  schedule.selasa[i].study_name %></td>
+                            <td><%= !schedule.rabu[i] ? "-" :  schedule.rabu[i].study_name %></td>
+                            <td><%= !schedule.kamis[i] ? "-" :  schedule.kamis[i].study_name %></td>
+                            <td><%= !schedule.jumat[i] ? "-" :  schedule.jumat[i].study_name %></td>
+                            </tr>
+                        <% } %>
+            </tbody>
+        </table>
+        </div>
+        <script type="text/javascrip">
+            function print(){
+                window.print();
+            }
+        </script>
+    </body>
+</html>

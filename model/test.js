@@ -25,15 +25,15 @@
 //     console.log(res ? "Match" : "Not Match");
 // });
 
-const admdb = require('./admin');
+// const admdb = require('./admin');
 
-admdb.CreateAdmin({firstname: "Kristian", secondname: "Ruben", username: "rhyuben", password: "starmoon0902", image: ""}, (result)=>{
-    if(result.status === 0){
-        console.log("GAGAL");
-    }else{
-        console.log("BERHASIL");
-    }
-})
+// admdb.CreateAdmin({firstname: "Kristian", secondname: "Ruben", username: "rhyuben", password: "starmoon0902", image: ""}, (result)=>{
+//     if(result.status === 0){
+//         console.log("GAGAL");
+//     }else{
+//         console.log("BERHASIL");
+//     }
+// })
 
 // admdb.AdminList({search: "", orderby: "firstname", order: "ASC", index: 0, len: 10}, (err, res, field)=>{
 //     if(err) throw err;
@@ -41,3 +41,12 @@ admdb.CreateAdmin({firstname: "Kristian", secondname: "Ruben", username: "rhyube
 //         console.log(element.firstname);
 //     });
 // });
+
+const sche = require('../model/schedule');
+sche.listScheduleClass({Class: 1, search: "", orderby: "time", order: "ASC", orderby2: "day_id", order2: "ASC", index: 0, len: 10}, (err, res, field)=>{
+    if(err){
+        console.log(err);
+    }else{
+        console.log(res);
+    }
+});
