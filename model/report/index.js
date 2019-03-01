@@ -45,4 +45,6 @@ function createReport({student_id, teacher_id, abs, hw, mid, sem, semester_id, s
     });
 }
 
-module.exports = Report;
+module.exports = {
+    createReport
+};
