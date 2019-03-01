@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_teacher
+ */
+
 function createTeacher({nip, name, gender, religion, born_place, born_date, address, phone_number, relationship}, callback){
     let result = {
         status: 0,

@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_news
+ */
+
 function createNews({title, content, writer}, callback){
     let result = {
         status: 0,

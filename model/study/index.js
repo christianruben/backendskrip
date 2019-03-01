@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_study
+ */
+
 function createStudy({study_name, study_code}, callback){
     let result = {
         status: 0,

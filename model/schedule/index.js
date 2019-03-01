@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_schedule
+ */
+
 function createSchedule({Class, day, teacher, study, type, start, end}, callback){
     let result = {
         status: 0,
@@ -109,8 +114,8 @@ function listScheduleClass({Class, search, orderby, order, index, len}, callback
     let query = `SELECT 
                     ts.schedule_id,
                     tst.study_name, 
-                    ts.schedule_time_start, 
-                    ts.schedule_time_end, 
+                    ts.schedule_time_start as time_start, 
+                    ts.schedule_time_end as time_end, 
                     td.day_name,
                     tc.class_name
                     FROM tbl_schedule as ts 
@@ -125,8 +130,8 @@ function listScheduleClass({Class, search, orderby, order, index, len}, callback
         query = `SELECT 
                     ts.schedule_id,
                     tst.study_name, 
-                    ts.schedule_time_start, 
-                    ts.schedule_time_end, 
+                    ts.schedule_time_start as time_start, 
+                    ts.schedule_time_end as time_end, 
                     td.day_name,
                     tc.class_name
                     FROM tbl_schedule as ts 
@@ -143,8 +148,8 @@ function listScheduleTeacher({id, search, orderby, order, index, len}, callback)
     let query = `SELECT 
                     ts.schedule_id,
                     tst.study_name, 
-                    ts.schedule_time_start, 
-                    ts.schedule_time_end, 
+                    ts.schedule_time_start as time_start, 
+                    ts.schedule_time_end as time_end, 
                     td.day_name,
                     tc.class_name
                     FROM tbl_schedule as ts 
@@ -159,8 +164,8 @@ function listScheduleTeacher({id, search, orderby, order, index, len}, callback)
         query = `SELECT 
                     ts.schedule_id,
                     tst.study_name, 
-                    ts.schedule_time_start, 
-                    ts.schedule_time_end, 
+                    ts.schedule_time_start as time_start, 
+                    ts.schedule_time_end as time_end, 
                     td.day_name,
                     tc.class_name
                     FROM tbl_schedule as ts 
@@ -175,10 +180,10 @@ function listScheduleTeacher({id, search, orderby, order, index, len}, callback)
 
 function getDetailSchedule({id}, callback){
     let query = `SELECT 
-                    ts.schedule_time_start,
-                    ts.schedule_time_end,
+                    ts.schedule_time_start as time_start,
+                    ts.schedule_time_end as time_end,
                     tst.study_name,
-                    td.day_name,
+                    td.day_name as day,
                     tc.class_name,
                     tt.name,
                     u.picture
@@ -192,4 +197,12 @@ function getDetailSchedule({id}, callback){
     connection.execute(query, [id], callback);
 }
 
-module.exports = Schedule;
+module.exports = {
+    getDetailSchedule,
+    listScheduleTeacher,
+    listScheduleClass,
+    deleteSchedule,
+    updateSchedule,
+    setType,
+    createSchedule
+};

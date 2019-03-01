@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_user
+ */
+
 function createAccount({idowner, level, username, password, picture}, callback){
     let datenow = util.getDateNow();
     let hashpass = util.passEncrypt(password);

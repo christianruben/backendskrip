@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_class
+ */
+
 function createClass({class_name, department}, callback){
     let result = {
         status : 0,

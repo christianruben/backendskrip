@@ -1,6 +1,11 @@
 const connection = require('../connection');
 const util = require('../../util');
 
+/**
+ * @author kristian ruben sianturi
+ * manage data in tbl_val_report
+ */
+
 function createReport({student_id, teacher_id, abs, hw, mid, sem, semester_id, study_id}, callback){
     let result = {
         status: 0,
