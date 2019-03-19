@@ -18,7 +18,7 @@ route.get('/teacher/:id', verifyToken, (req, res, next)=>{
 });
 
 route.get('/student/:id', verifyToken, (req, res, next)=>{
-
+    
 });
 
 route.get('/me', verifyToken, (req, res, next)=>{
@@ -78,10 +78,10 @@ route.get('/me', verifyToken, (req, res, next)=>{
     }
 });
 
-route.post('/', verifyToken, (req, res, next)=>{
+route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     // craete news
     if(req.admin){
-
+        let filename = req.file.filename;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

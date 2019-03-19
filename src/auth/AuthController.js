@@ -21,7 +21,7 @@ route.post('/login', (req, res, next)=>{
     });
 });
 
-route.post('/login/admin', (req, res, next)=>{
+route.post('/admin/login', (req, res, next)=>{
     let username = req.body.username, password = req.body.password;
     admin_model.Auth(username, password, (result)=>{
         if(result.status === 0){
