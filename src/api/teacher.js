@@ -39,7 +39,14 @@ route.post('/', verifyToken, (req, res, next)=>{
      * update study information
      */
     if(req.admin){
-
+        let NIP = req.body.nip;
+        let name = req.body.name;
+        let gender = req.body.gender;
+        let religion = req.body.religion;
+        let bornPlace = req.body.bornPlace;
+        let bornDate = req.body.bornDate;
+        let address = req.body.address;
+        let phoneNumber = req.body.relationship;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
@@ -61,7 +68,14 @@ route.put('/', verifyToken, (req, res, next)=>{
      * update study
      */
     if(req.admin || req.teacher){
-
+        let NIP = req.body.nip;
+        let name = req.body.name;
+        let gender = req.body.gender;
+        let religion = req.body.religion;
+        let bornPlace = req.body.bornPlace;
+        let bornDate = req.body.bornDate;
+        let address = req.body.address;
+        let phoneNumber = req.body.relationship;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

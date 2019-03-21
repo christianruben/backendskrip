@@ -81,6 +81,9 @@ route.get('/me', verifyToken, (req, res, next)=>{
 route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     // craete news
     if(req.admin){
+        let ownerid = req.body.ownerid;
+        let level = req.body.level;
+        let username = req.body.username;
         let filename = req.file.filename;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
@@ -111,7 +114,8 @@ route.delete('/', verifyToken, (req, res, next)=>{
 route.put('/', verifyToken, (req, res, next)=>{
     // update news
     if(req.admin){
-
+        let userid = req.body.userId;
+        let username = req.body.username;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

@@ -36,6 +36,19 @@ route.get('/student/class/:id', verifyToken, (req, res, next)=>{
      */
 });
 
+route.post('/', verifyToken, (req, res, next)=>{
+    if(req.admin){
+        let classid = req.body.classid;
+        let dayid = req.body.dayid;
+        let teacherid = req.body.teacherid;
+        let studyid = req.body.studyid;
+        let type = req.body.type;
+        let time = req.body.time;
+    }else{
+        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+    }
+});
+
 route.post('/student', verifyToken, (req, res, next)=>{
     /**
      * create schedule student

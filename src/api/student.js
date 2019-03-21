@@ -18,7 +18,17 @@ route.get('/class/:id', verifyToken, (req, res, next)=>{
 route.post('/', verifyToken, (req, res, next)=>{
     // create student data
     if(req.admin){
-
+        let NIS = req.body.nis;
+        let name = req.body.name;
+        let gender = req.body.gender;
+        let religion = req.body.religion;
+        let bornPlace = req.body.bornPlace;
+        let bornDate = req.body.bornDate;
+        let fatherName = req.body.fatherName;
+        let motherName = req.body.motherName;
+        let address = req.body.address;
+        let phoneNumber = req.body.phoneNumber;
+        let classid = req.body.classid;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
@@ -27,7 +37,7 @@ route.post('/', verifyToken, (req, res, next)=>{
 route.delete('/', verifyToken, (req, res, next)=>{
     // delete student
     if(req.admin){
-
+        let studentid = req.body.studentid;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
@@ -36,16 +46,17 @@ route.delete('/', verifyToken, (req, res, next)=>{
 route.put('/', verifyToken, (req, res, next)=>{
     // update student
     if(req.admin || req.student){
-
-    }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
-    }
-});
-
-route.put('/picture/:id', verifyToken, (req, res, next)=>{
-    // update picture
-    if(req.admin || req.student){
-
+        let NIS = req.body.nis;
+        let name = req.body.name;
+        let gender = req.body.gender;
+        let religion = req.body.religion;
+        let bornPlace = req.body.bornPlace;
+        let bornDate = req.body.bornDate;
+        let fatherName = req.body.fatherName;
+        let motherName = req.body.motherName;
+        let address = req.body.address;
+        let phoneNumber = req.body.phoneNumber;
+        let classid = req.body.classid;
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
