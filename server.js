@@ -1,5 +1,5 @@
 const cluster = require('cluster');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 
 const port = process.env.PORT || 3000;
@@ -14,10 +14,13 @@ if(cluster.isMaster){
     });
 }else{
     const app = require('./app');
-    https.createServer({
-        key: fs.readFileSync('localhost.key'),
-        cert: fs.readFileSync('localhost.crt')
-    }, app).listen(port, ()=>{
+    http.createServer(app).listen(port, ()=>{
         console.log(`Express server listening on port = ${port}`)
-    });
+    })
+    // https.createServer({
+    //     key: fs.readFileSync('localhost.key'),
+    //     cert: fs.readFileSync('localhost.crt')
+    // }, app).listen(port, ()=>{
+    //     console.log(`Express server listening on port = ${port}`)
+    // });
 }

@@ -30,7 +30,7 @@ route.post('/', verifyToken, (req, res, next)=>{
         let phoneNumber = req.body.phoneNumber;
         let classid = req.body.classid;
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 

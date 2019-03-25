@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
+const model_teacher = require('../../model/teacher');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -14,7 +15,7 @@ const storage = multer.diskStorage({
 
 let upload = multer({storage: storage});
 
-route.get('/', verifyToken, (req, res, next)=>{
+route.get('/', verifyToken, (req, res)=>{
     /**
      * get study list
      */
@@ -23,7 +24,19 @@ route.get('/', verifyToken, (req, res, next)=>{
     let sort   = req.query.sort;
     let rows   = req.query.rows;
     let index  = (req.query.page - 1) * rows;
-
+    let data_rows;
+    model_teacher.listTeacher({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
+        if(err){
+            return res.status(500).send({response: null, message: err.message})
+        }
+        data_rows = result;
+        model_teacher.getAllRows(search, (err, result, field)=>{
+            if(err){
+                return res.status(500).send({response: null, message: err.message})
+            }
+            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+        })
+    });
 });
 
 route.get('/:id', verifyToken, (req, res, next)=>{

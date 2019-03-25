@@ -27,7 +27,7 @@ route.post('/', verifyToken, (req, res, next)=>{
     if(req.admin){
 
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
@@ -38,7 +38,7 @@ route.delete('/', verifyToken, (req, res, next)=>{
     if(req.admin){
 
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 

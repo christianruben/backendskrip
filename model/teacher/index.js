@@ -123,11 +123,20 @@ function deleteTeacher({id}, callback){
 }
 
 function listTeacher({search, orderby, order, index, len}, callback){
+    if(search.length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT * FROM tbl_teacher WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
+    }else{
+        connection.execute(`SELECT * FROM tbl_teacher ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+    }
+}
+
+function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT * FROM tbl_teacher WHERE NIP LIKE N? OR name LIKE N? OR born_place LIKE N? OR address LIKE N? OR phone_number LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`,[src, src, src, src, src, index, len], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_teacher WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_teacher ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_teacher`, [], callback);
     }
 }
 
@@ -136,5 +145,6 @@ module.exports = {
     createTeacher,
     updateTeacher,
     deleteTeacher,
-    listTeacher
+    listTeacher,
+    getAllRows
 };

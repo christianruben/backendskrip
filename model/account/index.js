@@ -57,7 +57,7 @@ function Auth(username, password, callback){
         status: 0,
         err: "akun tidak dapat di temukan"
     }
-    connection.execute('SELECT * FROM tbl_admin WHERE username = ?', [username], (err, res, field)=>{
+    connection.execute('SELECT * FROM tbl_user WHERE username = ?', [username], (err, res, field)=>{
         if(err){
             result = {
                 status: -1,

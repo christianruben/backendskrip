@@ -45,7 +45,7 @@ route.post('/', verifyToken, (req, res, next)=>{
         let type = req.body.type;
         let time = req.body.time;
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
