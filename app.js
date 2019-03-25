@@ -16,6 +16,9 @@ app.set('view engine', 'ejs');
 // app.use('/api', )
 
 app.use(cors());
+app.get('/', (req, res, next)=>{
+    res.send('Hello');
+})
 app.use('/api', api);
 
 app.use('/authentication', auth);
