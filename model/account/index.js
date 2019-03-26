@@ -209,7 +209,7 @@ function listAccountStudent({search, orderby, order, index, len}, callback){
 }
 
 function getAccountTeacher({id}, callback){
-    connection.execute(`SELECT u.user_id, u.username, u.picture, tt.name FROM user as u INNER JOIN tbl_teacher as tt ON u.owner_id = tt.teacher_id WHERE u.user_id = ?`, [id], callback);
+    connection.execute(`SELECT u.user_id, tt.teacher_id, u.username, u.picture, tt.name, tt.relationship, tt.phone_number, tt.address, tt.born_date, tt.religion FROM user as u INNER JOIN tbl_teacher as tt ON u.owner_id = tt.teacher_id WHERE u.user_id = ?`, [id], callback);
 }
 
 function getAccountStudent({id}, callback){

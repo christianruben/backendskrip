@@ -133,9 +133,18 @@ function deleteStudent({id}, callback){
 function listStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_student WHERE name LIKE N? OR religion LIKE N? OR born_place LIKE N? OR father_name LIKE N? OR mother_name LIKE N? OR address LIKE N? OR phone_number LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src,src,src,src,src,src,src,index,len], callback);
+        connection.execute(`SELECT * FROM tbl_student WHERE name LIKE N? OR religion LIKE N? OR born_place LIKE N? OR father_name LIKE N? OR mother_name LIKE N? OR address LIKE N? OR phone_number LIKE N? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
     }else{
         connection.execute(`SELECT * FROM tbl_student ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_student`, [], callback);
     }
 }
 

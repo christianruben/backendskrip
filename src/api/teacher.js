@@ -2,6 +2,7 @@ const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
 const model_teacher = require('../../model/teacher');
+const model_account = require('../../model/account');
 const multer = require('multer');
 
 const storage = multer.diskStorage({
@@ -13,7 +14,7 @@ const storage = multer.diskStorage({
     }
 });
 
-let upload = multer({storage: storage});
+// let upload = multer({storage: storage});
 
 route.get('/', verifyToken, (req, res)=>{
     /**
@@ -43,8 +44,30 @@ route.get('/:id', verifyToken, (req, res, next)=>{
     /**
      * get study detail
      */
-    let id = req.path.id;
+    let id = req.params.id;
+    model_account.getAccountTeacher({id: id}, (err, result, field)=>{
+        if(err){
+            return res.status(500).send({result: null, message: 'Terjadi kesalahan dalam permintaan'});
+        }
 
+        if(result.length > 0){
+            let {username, picture, name, relationship, phone_number, address, born_date, religion} = result[0];
+            
+            return res.status(200).send({result: {
+                    username: username,
+                    picture: picture,
+                    name: name,
+                    relationship: relationship,
+                    phonenumber: phone_number,
+                    address: address,
+                    borndate: born_date,
+                    religion: religion
+                }, message: null
+            })
+        }else{
+            return res.status(404).send({result: null, message: 'profile tidak ditemukan'})
+        }
+    });
 });
 
 route.post('/', verifyToken, (req, res, next)=>{
@@ -52,16 +75,37 @@ route.post('/', verifyToken, (req, res, next)=>{
      * update study information
      */
     if(req.admin){
-        let NIP = req.body.nip;
-        let name = req.body.name;
-        let gender = req.body.gender;
-        let religion = req.body.religion;
-        let bornPlace = req.body.bornPlace;
-        let bornDate = req.body.bornDate;
-        let address = req.body.address;
-        let phoneNumber = req.body.relationship;
+        let NIP             = req.body.nip;
+        let name            = req.body.name;
+        let gender          = req.body.gender;
+        let religion        = req.body.religion;
+        let bornPlace       = req.body.bornPlace;
+        let bornDate        = req.body.bornDate;
+        let address         = req.body.address;
+        let phoneNumber     = req.body.phoneNumber;
+        let relationship    = req.body.relationship;
+
+        model_teacher.createTeacher(
+            {
+                nip: NIP, 
+                name: name, 
+                gender: gender, 
+                religion: religion, 
+                born_place: bornPlace, 
+                born_date: bornDate, 
+                address: address,
+                phone_number: phoneNumber,
+                relationship: relationship
+            }, (response)=>{
+                if(response.status == 1){
+                    return res.status(200).send({data: true, message: null});
+                }else{
+                    return res.status(500).send({data: false, message: response.message});
+                }
+            }
+        )
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
@@ -72,7 +116,7 @@ route.delete('/', verifyToken, (req, res, next)=>{
     if(req.admin){
 
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
@@ -81,16 +125,38 @@ route.put('/', verifyToken, (req, res, next)=>{
      * update study
      */
     if(req.admin || req.teacher){
-        let NIP = req.body.nip;
-        let name = req.body.name;
-        let gender = req.body.gender;
-        let religion = req.body.religion;
-        let bornPlace = req.body.bornPlace;
-        let bornDate = req.body.bornDate;
-        let address = req.body.address;
-        let phoneNumber = req.body.relationship;
+        let id              = req.body.id;
+        let NIP             = req.body.nip;
+        let name            = req.body.name;
+        let gender          = req.body.gender;
+        let religion        = req.body.religion;
+        let bornPlace       = req.body.bornPlace;
+        let bornDate        = req.body.bornDate;
+        let address         = req.body.address;
+        let phoneNumber     = req.body.phoneNumber;
+        let relationship    = req.body.relationship;
+
+        model_teacher.updateTeacher(
+            {
+                id: id, 
+                nip: NIP, 
+                name: name, 
+                religion: religion, 
+                born_date: bornDate, 
+                born_place: bornPlace, 
+                address: address,
+                phone_number: phoneNumber,
+                relationship: relationship
+            }, (response)=>{
+                if(response.status == 1){
+                    return res.status(200).send({data: true, message: null});
+                }else{
+                    return res.status(500).send({data: false, message: response.message});
+                }
+            }
+        );
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
