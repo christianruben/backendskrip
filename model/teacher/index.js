@@ -125,9 +125,9 @@ function deleteTeacher({id}, callback){
 function listTeacher({search, orderby, order, index, len}, callback){
     if(search.length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT * FROM tbl_teacher WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
+        connection.execute(`SELECT *, DATE_FORMAT(born_date, "%M %d %Y") as dateborn FROM tbl_teacher WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_teacher ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.execute(`SELECT *, DATE_FORMAT(born_date, "%M %d %Y") as dateborn FROM tbl_teacher ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 
