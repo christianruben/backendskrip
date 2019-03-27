@@ -13,7 +13,7 @@ function createAccount({idowner, level, username, password, picture}, callback){
         status: 0,
         err: "Username yang dimasukan sudah terdaftar"
     }
-    connection.execute(`SELECT user_id FROM user WHERE username = ?`, [username], (err, res, field)=>{
+    connection.execute(`SELECT user_id FROM tbl_user WHERE username = ?`, [username], (err, res, field)=>{
         if(err){
             result = {
                 status: -1,
@@ -24,8 +24,9 @@ function createAccount({idowner, level, username, password, picture}, callback){
             if(res.length > 0){
                 callback(result);
             }else{
-                connection.execute('INSERT INTO user(owner_id, level, username, password, picture, datecreate) VALUES(?, ?, ?, ?, ?, ?)', [idowner, level, username, hashpass, picture, datenow], (err, res)=> {
+                connection.execute('INSERT INTO tbl_user(owner_id, level, username, password, picture, datecreated) VALUES(?, ?, ?, ?, ?, ?)', [idowner, level, username, hashpass, picture, datenow], (err, res)=> {
                     if(err){
+                        console.log(err)
                         result = {
                             status: -1,
                             err: "Terjadi kesalahan pada server"

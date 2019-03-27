@@ -11,7 +11,8 @@ function createTeacher({nip, name, gender, religion, born_place, born_date, addr
         status: 0,
         err: "Terjadi kesalahan, tidak berhasil menyimpan"
     }
-    connection.execute(`SELECT * FROM tbl_teacher WHERE NIP = ?`, [nip], (err, res, field)=>{
+    console.log(`SELECT count(*) as countrow FROM tbl_teacher WHERE NIP = ${nip}`);
+    connection.execute(`SELECT count(*) as countrow FROM tbl_teacher WHERE NIP = ${nip}`, [nip], (err, resnow, field)=>{
         if(err){
             result = {
                 status: -1,
@@ -19,7 +20,8 @@ function createTeacher({nip, name, gender, religion, born_place, born_date, addr
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            console.log(resnow)
+            if(resnow[0].countrow > 0){
                 result = {
                     status: 0,
                     err: "NIP telah terdaftar"
@@ -38,7 +40,8 @@ function createTeacher({nip, name, gender, religion, born_place, born_date, addr
                         if(res.affectedRows > 0){
                             result = {
                                 status: 1,
-                                err: null
+                                err: null,
+                                userid: res.insertId
                             }
                             callback(result);
                         }else{
