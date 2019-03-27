@@ -1,6 +1,7 @@
 module.exports = {
     'host': '127.0.0.1',
     'user': 'root',
-    'password': 'weita',
+   // 'password': 'weita',
+    'password': '',
     'database': 'akademik'
 }
