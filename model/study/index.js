@@ -123,9 +123,19 @@ function deleteStudy({id}, callback){
 function listStudy({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT * FROM tbl_study WHERE study_name LIKE N? OR study_code LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+        connection.execute(`SELECT * FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src], callback);
     }else{
         connection.execute(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM study_name LIKE ? OR study_code LIKE ?`, [src, src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_student`, [], callback);
     }
 }
 

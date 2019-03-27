@@ -54,7 +54,7 @@ function deleteTime({id}, callback){
 
 function listTime({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
-        connection.execute(`SELECT * FROM tbl_time WHERE time_name LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [search.trim(), index, len], callback);
+        connection.execute(`SELECT * FROM tbl_time WHERE time_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ?,?`, [search.trim(), index, len], callback);
     }else{
         connection.execute(`SELECT * FROM tbl_time LIMIT ?,?`, [index, len], callback);
     }

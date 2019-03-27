@@ -126,11 +126,11 @@ function listScheduleAll({search, orderby, order, index, len}, callback){
                         INNER JOIN tbl_day as td ON ts.day_id = td.day_id
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
-                        WHERE tst.study_name LIKE N? OR tt.name LIKE N? OR tc.class_name LIKE N? OR ts.day_name LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`;
+                        WHERE tst.study_name LIKE ? OR tt.name LIKE ? OR tc.class_name LIKE ? OR ts.day_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`;
 
     if(search.trim().length > 0){
         let src = search.trim();
-        connection.execute(query, [src, src, src, src, index, len], callback);
+        connection.execute(query, [src, src, src, src], callback);
     }else{
         query = `SELECT 
         ts.schedule_id,
@@ -147,11 +147,35 @@ function listScheduleAll({search, orderby, order, index, len}, callback){
             INNER JOIN tbl_day as td ON ts.day_id = td.day_id
             INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
             INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
-            ORDER BY ${orderby} ${order} LIMIT ?,?`;
+            ORDER BY ${orderby} ${order} LIMIT ${index},${len}`;
         
-        connection.execute(query, [index, len], callback);
+        connection.execute(query, [], callback);
     }
     
+}
+
+function getAllRowsSchedule(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT 
+                    count(*) as countall
+                    FROM tbl_schedule as ts 
+                        INNER JOIN tbl_time as tti ON ts.time = tti.time_id
+                        INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+                        INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+                        INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+                        INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
+                        WHERE tst.study_name LIKE ? OR tt.name LIKE ? OR tc.class_name LIKE ? OR ts.day_name LIKE ? `, [src, src, src, src], callback);
+    }else{
+        connection.execute(`SELECT
+        count(*) as countall
+        FROM tbl_schedule as ts 
+            INNER JOIN tbl_time as tti ON ts.time = tti.time_id
+            INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+            INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+            INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+            INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id`, [], callback);
+    }
 }
 
 function listScheduleClass({Class, search, orderby, order, orderby2, order2, index, len}, callback){
@@ -170,10 +194,10 @@ function listScheduleClass({Class, search, orderby, order, orderby2, order2, ind
                         INNER JOIN tbl_day as td ON ts.day_id = td.day_id
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
-                        WHERE tst.study_name LIKE N? AND ts.class_id = ? ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ?,?`;
+                        WHERE tst.study_name LIKE ? AND ts.class_id = ? ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ${index},${len}`;
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(query, [src, Class, index, len], callback);
+        connection.execute(query, [src, Class], callback);
     }else{
         query = `SELECT 
                     ts.schedule_id,
@@ -191,9 +215,34 @@ function listScheduleClass({Class, search, orderby, order, orderby2, order2, ind
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
                         WHERE ts.class_id = ? 
-                        ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ?,?`;
+                        ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ${index},${len}`;
         console.log(Class, index, len);
-        connection.execute(query, [Class, index, len], callback);
+        connection.execute(query, [Class], callback);
+    }
+}
+
+function getAllRowsScheduleClass(Class, search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT 
+                    count(*) as countall
+                    FROM tbl_schedule as ts 
+                        INNER JOIN tbl_time as tti ON ts.time = tti.time_id
+                        INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+                        INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+                        INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+                        INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
+                        WHERE tst.study_name LIKE ? AND ts.class_id = ? `, [src, Class], callback);
+    }else{
+        connection.execute(`SELECT
+        count(*) as countall
+        FROM tbl_schedule as ts 
+            INNER JOIN tbl_time as tti ON ts.time = tti.time_id
+            INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+            INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+            INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+            INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
+            WHERE ts.class_id = ? `, [Class], callback);
     }
 }
 
@@ -209,10 +258,10 @@ function listScheduleTeacher({id, search, orderby, order, index, len}, callback)
                         INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
                         INNER JOIN tbl_day as td ON ts.day_id = td.day_id
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
-                        WHERE tst.study_name LIKE N? AND ts.teacher_id = ? ORDER BY ${orderby} ${order} LIMIT ?,?`;
+                        WHERE tst.study_name LIKE ? AND ts.teacher_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`;
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(query, [src, id, index, len], callback);
+        connection.execute(query, [src, id], callback);
     }else{
         query = `SELECT 
                     ts.schedule_id,
@@ -226,8 +275,29 @@ function listScheduleTeacher({id, search, orderby, order, index, len}, callback)
                         INNER JOIN tbl_day as td ON ts.day_id = td.day_id
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         WHERE ts.teacher_id = ? 
-                        ORDER BY ${orderby} ${order} LIMIT ?,?`;
-        connection.execute(query, [id, index, len], callback);
+                        ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`;
+        connection.execute(query, [id], callback);
+    }
+}
+
+function getAllRowsScheduleTeacher(id, search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT 
+                    count(*) as countall
+                    FROM tbl_schedule as ts 
+                        INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+                        INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+                        INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+                        WHERE tst.study_name LIKE ? AND ts.teacher_id = ?`, [src, id], callback);
+    }else{
+        connection.execute(`SELECT
+        count(*) as countall
+        FROM tbl_schedule as ts 
+            INNER JOIN tbl_study as tst ON tst.study_id = ts.study_id 
+            INNER JOIN tbl_day as td ON ts.day_id = td.day_id
+            INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
+            WHERE ts.teacher_id = ? `, [id], callback);
     }
 }
 

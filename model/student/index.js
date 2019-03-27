@@ -130,12 +130,21 @@ function deleteStudent({id}, callback){
     });
 }
 
+function listClassStudent({classid, search, orderby, order, index, len}, callback){
+    if(search.trim().length > 0){
+        let src = `%${search}%`;
+        connection.execute(`SELECT * FROM tbl_student WHERE class_id = ? name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [classid, src,src,src,src,src,src,src], callback);
+    }else{
+        connection.execute(`SELECT * FROM tbl_student WHERE class_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [classid], callback);
+    }
+}
+
 function listStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_student WHERE name LIKE N? OR religion LIKE N? OR born_place LIKE N? OR father_name LIKE N? OR mother_name LIKE N? OR address LIKE N? OR phone_number LIKE N? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
+        connection.execute(`SELECT * FROM tbl_student WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_student ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT * FROM tbl_student ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 
@@ -145,6 +154,15 @@ function getAllRows(search, callback){
         connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
     }else{
         connection.execute(`SELECT count(*) as countall FROM tbl_student`, [], callback);
+    }
+}
+
+function getAllRowsClass(classid, search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE class_id = ? NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [classid,src, src, src, src, src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE class_id = ?`, [classid], callback);
     }
 }
 

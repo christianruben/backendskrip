@@ -79,9 +79,19 @@ function deleteClass({id}, callback){
 function listClass({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_class WHERE class_name LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, index, len], callback);
+        connection.execute(`SELECT * FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
     }else{
         connection.execute(`SELECT * FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM tbl_class WHERE class_name LIKE ?`, [src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_class`, [], callback);
     }
 }
 

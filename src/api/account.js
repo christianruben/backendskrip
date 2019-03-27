@@ -2,8 +2,6 @@ const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
 const user_model = require('../../model/account');
-const teacher_model = require('../../model/teacher');
-const student_model = require('../../model/student');
 const admin_model   = require('../../model/admin');
 const upload        = require('../upload');
 
@@ -14,11 +12,43 @@ route.get('/', verifyToken, (req, res, next)=>{
 
 route.get('/teacher/:id', verifyToken, (req, res, next)=>{
     // get detail news
-    
+    const id = req.params.id;
+    user_model.getAccountTeacher({id: id}, (err, res, field)=>{
+        if(err){
+            return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
+        }else{
+            if(res.length > 0){
+                let data = {
+                    name: res[0].name,
+                    picture: res[0].picture,
+                    username: res[0].username
+                }
+                return res.status(200).send({auth: true, message: null, data: data});
+            }else{
+                return res.status(400).send({auth: false, message: 'Cannot find', data: null});
+            }
+        }
+    });
 });
 
 route.get('/student/:id', verifyToken, (req, res, next)=>{
-    
+    const id = req.params.id;
+    user_model.getAccountTeacher({id: id}, (err, res, field)=>{
+        if(err){
+            return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
+        }else{
+            if(res.length > 0){
+                let data = {
+                    name: res[0].name,
+                    picture: res[0].picture,
+                    username: res[0].username
+                }
+                return res.status(200).send({auth: true, message: null, data: data});
+            }else{
+                return res.status(400).send({auth: false, message: 'Cannot find', data: null});
+            }
+        }
+    });
 });
 
 route.get('/me', verifyToken, (req, res, next)=>{

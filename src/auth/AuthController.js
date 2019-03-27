@@ -15,8 +15,8 @@ route.post('/login', (req, res, _)=>{
             return res.status(500).send({auth: false, message: result.err, token: null});
         }
         else{
-            let token = jwt.sign({id: result.data.id, owner: result.data.ownid, level: result.data.level});
-            return res.status(200).send({auth: false, message:null, token: token});
+            let token = jwt.sign({id: result.data.id, owner: result.data.ownid, level: result.data.level}, config.secret, {});
+            return res.status(200).send({auth: true, message:null, token: token});
         }
     });
 });

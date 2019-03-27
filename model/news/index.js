@@ -61,9 +61,19 @@ function updateNews({id,title, content}, callback){
 function listNews({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_news WHERE title LIKE N? OR content LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len],callback);
+        connection.execute(`SELECT * FROM tbl_news WHERE title LIKE ? OR content LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src],callback);
     }else{
         connection.execute(`SELECT * FROM tbl_news ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM tbl_news WHERE title LIKE ? OR content LIKE ?`, [src, src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_news`, [], callback);
     }
 }
 

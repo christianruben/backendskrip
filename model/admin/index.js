@@ -212,9 +212,19 @@ const DeleteAdmin = ({id}, callback)=>{
 const AdminList = ({search, orderby, order, index, len}, callback)=>{
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_admin WHERE firstname LIKE N? OR lastname LIKE N? ORDER BY ${orderby} ${order} LIMIT ?,?`, [src, src, index, len], callback);
+        connection.execute(`SELECT * FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [src, src], callback);
     }else{
         connection.execute(`SELECT * FROM tbl_admin ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+    }
+}
+
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        let src = `%${search.trim()}%`;
+        connection.execute(`SELECT count(*) as countall FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? username LIKE ?`, [src, src, src], callback);
+    }else{
+        connection.execute(`SELECT count(*) as countall FROM tbl_admin`, [], callback);
     }
 }
 
