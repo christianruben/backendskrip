@@ -1,13 +1,27 @@
 const express = require('express');
 const route = express.Router();
-const newstbl = require('../../model/news');
+const model_news = require('../../model/news');
 const verifyToken = require('../verification');
 
 route.get('/', verifyToken, (req, res, next)=>{
     // get list news
     let search_query    = req.params.search;
-    let index           = req.params.index;
-    let orderby         = req.params.orderby;
+    let rows = 10;
+    let index  = (req.query.page - 1) * rows;
+    let data_rows;
+    
+    model_news.listNews({search: search_query, orderby: "datecreated", order: "ASC", len: rows}, (err, result, field)=>{
+        if(err){
+            return res.status(500).send({response: null, message: err.message})
+        }
+        data_rows = result;
+        model_news.getAllRows(search_query, (err, result, field)=>{
+            if(err){
+                return res.status(500).send({response: null, message: err.message})
+            }
+            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+        });
+    });
     
 });
 

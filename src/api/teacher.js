@@ -130,6 +130,13 @@ route.delete('/', verifyToken, (req, res, next)=>{
         const id = req.body.id;
         model_teacher.deleteTeacher({id: id}, response=>{
             if(response.status == 1){
+                model_account.deleteAccount({id: id, level: 2}, response=>{
+                    if(response.status == 1){
+                        return res.status(200).send({data: true, message: null});
+                    }else{
+                        return res.status(500).send({data: false, message: response.err});
+                    }
+                });
                 return res.status(200).send({data: true, message: null});
             }else{
                 return res.status(500).send({data: false, message: response.err});
@@ -175,7 +182,7 @@ route.put('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
             }, (response)=>{
                 if(response.status == 1){
                     if(filename){
-                        model_account.updatePicture({id: id, picture: filename}, response=>{
+                        model_account.updatePicture({id: id, level: 2, picture: filename}, response=>{
                             if(response.status == 1){
                                 return res.status(200).send({data: true, message: null});
                             }else{

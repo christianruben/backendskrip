@@ -1,5 +1,6 @@
 const express = require('express');
 const route = express.Router();
+const upload        = require('../upload');
 const model_student = require('../../model/student');
 const model_account = require('../../model/account');
 const verifyToken = require('../verification');
@@ -33,10 +34,8 @@ route.get('/:id', verifyToken, (req, res, next)=>{
         if(err){
             return res.status(500).send({result: null, message: 'Terjadi kesalahan dalam permintaan'});
         }
-
         if(result.length > 0){
-            let {username, picture, name, relationship, phone_number, address, born_date, religion} = result[0];
-            
+            let {username, picture, name, phone_number, address, born_date, religion} = result[0];
             return res.status(200).send({result: {
                     username: username,
                     picture: picture,
@@ -77,9 +76,13 @@ route.get('/class/:id', verifyToken, (req, res, next)=>{
     });
 });
 
-route.post('/', verifyToken, (req, res, next)=>{
+route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     // create student data
     if(req.admin){
+        let filename = null;
+        if(req.file){
+            filename = req.file.filename;
+        }
         let NIS = req.body.nis;
         let name = req.body.name;
         let gender = req.body.gender;
@@ -91,6 +94,36 @@ route.post('/', verifyToken, (req, res, next)=>{
         let address = req.body.address;
         let phoneNumber = req.body.phoneNumber;
         let classid = req.body.classid;
+        model_student.createStudent(
+            {
+                nis: NIS, 
+                name: name, 
+                gender: gender, 
+                religion: religion, 
+                born_place: bornPlace, 
+                born_date: bornDate, 
+                father_name: fatherName, 
+                mother_name: motherName, 
+                address: address, 
+                phone_number: phoneNumber, 
+                class_id: classid
+            }, response=>{
+                if(response.status == 1){
+                    if(filename){
+                        model_account.createAccount({idowner: response.userid, level: 1, username: `${name}${NIS}`, password: `${phoneNumber}${NIS}`, picture: filename}, response=>{
+                            if(response.status == 1){
+                                return res.status(200).send({data: true, message: null});
+                            }else{
+                                return res.status(500).send({data: false, message: response.err});
+                            }
+                        });
+                    }
+                    return res.status(200).send({data: true, message: null});
+                }else{
+                    return res.status(500).send({data: false, message: response.err});
+                }
+            }
+        )
     }else{
         res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
@@ -99,7 +132,21 @@ route.post('/', verifyToken, (req, res, next)=>{
 route.delete('/', verifyToken, (req, res, next)=>{
     // delete student
     if(req.admin){
-        let studentid = req.body.studentid;
+        let id = req.body.id;
+        model_student.deleteStudent({id: id}, response=>{
+            if(response.status == 1){
+                model_account.deleteAccount({id: id, level: 1}, response=>{
+                    if(response.status == 1){
+                        return res.status(200).send({data: true, message: null});
+                    }else{
+                        return res.status(500).send({data: false, message: response.err});
+                    }
+                });
+                return res.status(200).send({data: true, message: null});
+            }else{
+                return res.status(500).send({data: false, message: response.err});
+            }
+        });
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
@@ -108,6 +155,11 @@ route.delete('/', verifyToken, (req, res, next)=>{
 route.put('/', verifyToken, (req, res, next)=>{
     // update student
     if(req.admin || req.student){
+        let filename = null;
+        if(req.file){
+            filename = req.file.filename;
+        }
+        let id = req.body.id
         let NIS = req.body.nis;
         let name = req.body.name;
         let gender = req.body.gender;
@@ -119,6 +171,37 @@ route.put('/', verifyToken, (req, res, next)=>{
         let address = req.body.address;
         let phoneNumber = req.body.phoneNumber;
         let classid = req.body.classid;
+        model_student.updateStudent(
+            {
+                id: id, 
+                nis: NIS, 
+                name: name, 
+                gender: gender, 
+                religion: religion, 
+                born_place: bornPlace, 
+                born_date: bornDate, 
+                father_name: fatherName, 
+                mother_name: motherName,
+                address: address,
+                phone_number: phoneNumber,
+                classid: classid
+            }, response=>{
+                if(response.status == 1){
+                    if(filename){
+                        model_account.updatePicture({id: id, level: 1, picture: filename}, response=>{
+                            if(response.status == 1){
+                                return res.status(200).send({data: true, message: null});
+                            }else{
+                                return res.status(500).send({data: false, message: response.err});
+                            }
+                        })
+                    }
+                    return res.status(200).send({data: true, message: null});
+                }else{
+                    return res.status(500).send({data: false, message: response.err});
+                }
+            }
+        )
     }else{
         res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }

@@ -140,12 +140,12 @@ function update({id, username}, callback){
     });
 }
 
-function updatePicture({id, picture}, callback){
+function updatePicture({id, level, picture}, callback){
     let result = {
         status: 0,
         err: "Terjadi kesalahan, gagal perbaharui photo"
     }
-    connection.execute(`UPDATE user SET picture = ? WHERE user_id = ? OR owner_id = ?`, [picture, id, id], (err, res)=> {
+    connection.execute(`UPDATE user SET picture = ? WHERE user_id = ? OR owner_id = ? AND level = ?`, [picture, id, id, level], (err, res)=> {
         console.log(err)
         if(err){
             result = {

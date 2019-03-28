@@ -14,13 +14,11 @@ route.get('/', verifyToken, (req, res, next)=>{
         }
         if(res){
             let arr = JSON.parse(JSON.stringify(result));
-            let send = {name:[], id: [], dept: []}
+            let send = []
             arr.forEach(element => {
-                send.name.push(element.class_name)
-                send.id.push(element.class_id)
-                send.dept.push(element.department_id)
+                send.push({'name': element.class_name, 'id': element.class_id, 'dept': element.department_id})
             });
-            return res.status(200).send({response: send, message: err});
+            return res.status(200).send({response: JSON.stringify(send), message: err});
         }else{
             return res.status(500).send({response: null, message: 'Tidak ada data'});
         }
