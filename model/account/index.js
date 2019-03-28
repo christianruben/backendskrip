@@ -14,6 +14,7 @@ function createAccount({idowner, level, username, password, picture}, callback){
         err: "Username yang dimasukan sudah terdaftar"
     }
     connection.execute(`SELECT user_id FROM tbl_user WHERE username = ?`, [username], (err, res, field)=>{
+        console.log(err)
         if(err){
             result = {
                 status: -1,
@@ -144,7 +145,8 @@ function updatePicture({id, picture}, callback){
         status: 0,
         err: "Terjadi kesalahan, gagal perbaharui photo"
     }
-    connection.execute(`UPDATE user SET picture = ? WHERE user_id = ?`, [picture, id], (err, res)=> {
+    connection.execute(`UPDATE user SET picture = ? WHERE user_id = ? OR owner_id = ?`, [picture, id, id], (err, res)=> {
+        console.log(err)
         if(err){
             result = {
                 status: -1,
@@ -165,12 +167,12 @@ function updatePicture({id, picture}, callback){
     });
 }
 
-function deleteAccount({id}, callback){
+function deleteAccount({id, level}, callback){
     let result = {
         status: 0,
         err: "Terjadi kesalahan, gagal menghapus"
     }
-    connection.execute(`DELETE FROM user WHERE user_id IN(?)`, [id], (err, res)=>{
+    connection.execute(`DELETE FROM user WHERE user_id IN(?) OR owner_id IN(?) AND level = ?`, [id, id, level], (err, res)=>{
         if(err){
             result = {
                 status: -1,

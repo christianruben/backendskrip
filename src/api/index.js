@@ -21,7 +21,7 @@ router.use('/schedule', schedule);
 router.use('/student', student);
 router.use('/study', study);
 router.use('/teacher', teacher);
-router.use('/classes', classes);
+router.use('/class', classes);
 router.use('/root', room);
 
 module.exports = router;

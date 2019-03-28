@@ -75,10 +75,13 @@ route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     /**
      * update study information
      */
-    if(!req.file){
-        return res.status(204).send({auth: false, message: "Upload failed", data: null});
+    // if(!req.file){
+    //     return res.status(204).send({auth: false, message: "Upload failed", data: null});
+    // }
+    let filename = "";
+    if(req.file){
+        filename = req.file.filename;
     }
-    let filename = req.file.filename;
     if(req.admin){
         let NIP             = req.body.nip;
         let name            = req.body.name;
@@ -124,44 +127,65 @@ route.delete('/', verifyToken, (req, res, next)=>{
      * delete study
      */
     if(req.admin){
-
+        const id = req.body.id;
+        model_teacher.deleteTeacher({id: id}, response=>{
+            if(response.status == 1){
+                return res.status(200).send({data: true, message: null});
+            }else{
+                return res.status(500).send({data: false, message: response.err});
+            }
+        })
     }else{
         return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
-route.put('/', verifyToken, (req, res, next)=>{
+route.put('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     /**
      * update study
      */
+    let filename = null;
+    if(req.file){
+        filename = req.file.filename;
+    }
     if(req.admin || req.teacher){
         let id              = req.body.id;
         let NIP             = req.body.nip;
         let name            = req.body.name;
-        let gender          = req.body.gender;
+        let gender          = req.body.gender.toLowerCase();
         let religion        = req.body.religion;
         let bornPlace       = req.body.bornPlace;
         let bornDate        = req.body.bornDate;
         let address         = req.body.address;
         let phoneNumber     = req.body.phoneNumber;
-        let relationship    = req.body.relationship;
+        let relationship    = req.body.relationship.toLowerCase();
 
         model_teacher.updateTeacher(
             {
-                id: id, 
-                nip: NIP, 
-                name: name, 
-                religion: religion, 
-                born_date: bornDate, 
-                born_place: bornPlace, 
+                id: id,
+                nip: NIP,
+                name: name,
+                gender: gender,
+                religion: religion,
+                born_date: bornDate,
+                born_place: bornPlace,
                 address: address,
                 phone_number: phoneNumber,
                 relationship: relationship
             }, (response)=>{
                 if(response.status == 1){
+                    if(filename){
+                        model_account.updatePicture({id: id, picture: filename}, response=>{
+                            if(response.status == 1){
+                                return res.status(200).send({data: true, message: null});
+                            }else{
+                                return res.status(500).send({data: false, message: response.err});
+                            }
+                        })
+                    }
                     return res.status(200).send({data: true, message: null});
                 }else{
-                    return res.status(500).send({data: false, message: response.message});
+                    return res.status(500).send({data: false, message: response.err});
                 }
             }
         );

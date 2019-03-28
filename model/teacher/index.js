@@ -5,13 +5,13 @@ const util = require('../../util');
  * @author kristian ruben sianturi
  * manage data in tbl_teacher
  */
+const selectField = `tt.NIP, tt.name, tt.gender, tt.religion, tt.born_place, tt.born_date, tt.address, tt.address, tt.phone_number, tt.relationship`;
 
 function createTeacher({nip, name, gender, religion, born_place, born_date, address, phone_number, relationship}, callback){
     let result = {
         status: 0,
         err: "Terjadi kesalahan, tidak berhasil menyimpan"
     }
-    console.log(`SELECT count(*) as countrow FROM tbl_teacher WHERE NIP = ${nip}`);
     connection.execute(`SELECT count(*) as countrow FROM tbl_teacher WHERE NIP = ${nip}`, [nip], (err, resnow, field)=>{
         if(err){
             result = {
@@ -20,7 +20,6 @@ function createTeacher({nip, name, gender, religion, born_place, born_date, addr
             }
             callback(result);
         }else{
-            console.log(resnow)
             if(resnow[0].countrow > 0){
                 result = {
                     status: 0,
@@ -54,12 +53,14 @@ function createTeacher({nip, name, gender, religion, born_place, born_date, addr
     });
 }
 
-function updateTeacher({id, nip, name, religion, born_place, born_date, address, phone_number, relationship}, callback){
+function updateTeacher({id, nip, name, gender, religion, born_place, born_date, address, phone_number, relationship}, callback){
     let result = {
         status: 0,
-        err: "Terjadi kesalahan, tidak berhasil menyimpan"
+        err: "Terjadi kesalahan, tidak berhasil memperbaharui"
     }
-    connection.execute(`SELECT * FROM tbl_teacher WHERE NIP = ?`, [nip], (err, res, field)=>{
+    console.log(id)
+    connection.execute(`SELECT * FROM tbl_teacher WHERE teacher_id = ?`, [id], (err, res, field)=>{
+        console.log(err)
         if(err){
             result = {
                 status: -1,
@@ -67,15 +68,16 @@ function updateTeacher({id, nip, name, religion, born_place, born_date, address,
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.length <= 0){
                 result = {
                     status: 0,
-                    err: "NIP telah terdaftar"
+                    err: "Update gagal, data tidak ditemukan"
                 }
                 callback(result);
             }else{
                 let val = [nip, name, gender, religion, born_place, born_date, address, phone_number, relationship, id];
-                connection.execute(`UPDATE tbl_teacher SET NIP = ?, name = ?, religion = ?, born_place = ?, born_date = ?, address = ?, phonenumber = ?, relationship = ? WHERE teacher_id = ?`,val, (err, res)=>{
+                connection.execute(`UPDATE tbl_teacher SET NIP = ?, name = ?, gender = ?, religion = ?, born_place = ?, born_date = ?, address = ?, phone_number = ?, relationship = ? WHERE teacher_id = ?`,val, (err, res)=>{
+                    console.log(err)
                     if(err){
                         result = {
                             status: -1,
@@ -105,6 +107,7 @@ function deleteTeacher({id}, callback){
         err: "Terjadi kesalahan, gagal menghapus"
     }
     connection.execute(`DELETE FROM tbl_teacher WHERE teacher_id IN(?)`, [id], (err, res)=>{
+        console.log(err);
         if(err){
             result = {
                 status: -1,
@@ -112,9 +115,10 @@ function deleteTeacher({id}, callback){
             }
             callback(result);
         }else{
+            console.log(res.affectedRows);
             if(res.affectedRows > 0){
                 result = {
-                    status: 0,
+                    status: 1,
                     err: null
                 }
                 callback(result);
@@ -128,9 +132,9 @@ function deleteTeacher({id}, callback){
 function listTeacher({search, orderby, order, index, len}, callback){
     if(search.length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT *, DATE_FORMAT(born_date, "%M %d %Y") as dateborn FROM tbl_teacher WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
+        connection.execute(`SELECT ${selectField}, tu.picture, DATE_FORMAT(born_date, "%Y-%m-%d") as dateborn FROM tbl_teacher as tt INNER JOIN tbl_user as tu ON tt.teacher_id = tu.owner_id WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
     }else{
-        connection.execute(`SELECT *, DATE_FORMAT(born_date, "%M %d %Y") as dateborn FROM tbl_teacher ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.execute(`SELECT ${selectField}, tu.picture, DATE_FORMAT(born_date, "%Y-%m-%d") as dateborn FROM tbl_teacher as tt INNER JOIN tbl_user as tu ON tt.teacher_id = tu.owner_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 

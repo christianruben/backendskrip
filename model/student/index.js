@@ -5,6 +5,7 @@ const util = require('../../util');
  * @author kristian ruben sianturi
  * manage data in tbl_student
  */
+const selectField = `ts.NIP, ts.name, ts.gender, ts.religion, ts.born_place, ts.born_date, ts.address, ts.address, ts.phone_number, ts.relationship, ts.father_name, ts.mother_name`;
 
 function createStudent({nis, name, gender, religion, born_place, born_date, father_name, mother_name, address, phone_number, class_id}, callback){
     let result = {
@@ -133,18 +134,18 @@ function deleteStudent({id}, callback){
 function listClassStudent({classid, search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_student WHERE class_id = ? name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [classid, src,src,src,src,src,src,src], callback);
+        connection.execute(`SELECT ${selectField}, DATE_FORMAT(born_date, "%Y-%m-%d"), tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON tt.student_id = tu.user_id WHERE class_id = ? name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [classid, src,src,src,src,src,src,src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_student WHERE class_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [classid], callback);
+        connection.execute(`SELECT ${selectField}, DATE_FORMAT(born_date, "%Y-%m-%d"), tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON tt.student_id = tu.user_id WHERE class_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [classid], callback);
     }
 }
 
 function listStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_student WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
+        connection.execute(`SELECT ${selectField}, DATE_FORMAT(born_date, "%Y-%m-%d"), tu.picture, tc.class_name FROM tbl_student as ts INNER JOIN tbl_user as tu ON tt.student_id = tu.user_id INNER JOIN tbl_class as tc ON tt.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_student ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.execute(`SELECT ${selectField}, DATE_FORMAT(born_date, "%Y-%m-%d"), tu.picture, tc.class_name FROM tbl_student as ts INNER JOIN tbl_user as tu ON tt.student_id = tu.user_id INNER JOIN tbl_class as tc ON tt.class_id = tc.class_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 
@@ -176,5 +177,7 @@ module.exports = {
     updateStudent,
     deleteStudent,
     listStudent,
-    getStudent
+    getStudent,
+    getAllRows,
+    getAllRowsClass
 };

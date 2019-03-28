@@ -52,11 +52,23 @@ function deleteTime({id}, callback){
     });
 }
 
+function getAllList(callback){
+    connection.execute(`SELECT * FROM tbl_time ORDER BY time_id ASC`, [], callback);
+}
+
 function listTime({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
-        connection.execute(`SELECT * FROM tbl_time WHERE time_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ?,?`, [search.trim(), index, len], callback);
+        connection.execute(`SELECT * FROM tbl_time WHERE time_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [search.trim()], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_time LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT * FROM tbl_time ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
+    }
+}
+
+function getAllRows(search, callback){
+    if(search.trim().length > 0){
+        connection.execute(`SELECT count(*) as rowcount FROM tbl_time WHERE time_name LIKE ? `, [search.trim()], callback);
+    }else{
+        connection.execute(`SELECT count(*) as rowcount FROM tbl_time`, [], callback);
     }
 }
 
@@ -90,5 +102,8 @@ module.exports = {
     createTime,
     deleteTime,
     listTime,
-    updateTime
-}
+    updateTime,
+    getAllList,
+    getAllRow
+},
+getAllRow

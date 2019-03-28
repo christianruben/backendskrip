@@ -8,7 +8,6 @@ var cors = require('cors');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
 app.set('views', __dirname+"/views");
 app.set('view engine', 'ejs');
@@ -16,6 +15,7 @@ app.set('view engine', 'ejs');
 // app.use('/api', )
 
 app.use(cors());
+app.use(express.static(__dirname+'/public'));
 app.get('/', (req, res, next)=>{
     res.send('Hello');
 })

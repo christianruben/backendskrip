@@ -148,5 +148,6 @@ module.exports = {
     updateStudy,
     deleteStudy,
     listStudy,
-    getStudy
+    getStudy,
+    getAllRows
 };

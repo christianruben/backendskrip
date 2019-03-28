@@ -240,5 +240,6 @@ module.exports = {
     UpdateAdminPass,
     DeleteAdmin,
     AdminList,
-    getAdmin
+    getAdmin,
+    getAllRows
 };

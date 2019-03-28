@@ -1,6 +1,6 @@
 const express = require('express');
 const route = express.Router();
-const model_student = requie('../model/student');
+const model_student = require('../../model/student');
 const model_account = require('../../model/account');
 const verifyToken = require('../verification');
 

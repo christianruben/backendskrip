@@ -112,5 +112,6 @@ module.exports = {
     createNews,
     updateNews,
     getNews,
-    deleteNews
+    deleteNews,
+    getAllRows
 };

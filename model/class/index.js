@@ -76,12 +76,16 @@ function deleteClass({id}, callback){
     });
 }
 
+function loadAll(callback){
+    connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY class_id ASC`, [], callback);
+}
+
 function listClass({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
+        connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
@@ -99,5 +103,7 @@ function getAllRows(search, callback){
 module.exports = {
     createClass,
     deleteClass,
-    listClass
+    listClass,
+    loadAll,
+    getAllRows
 };
