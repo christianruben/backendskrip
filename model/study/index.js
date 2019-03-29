@@ -63,10 +63,10 @@ function updateStudy({study_name, study_code, id}, callback){
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.length < 0){
                 result = {
                     status: 0,
-                    err: "kode pelajaran sudah terdaftar"
+                    err: "kode pelajaran belum terdaftar"
                 }
                 callback(result);
             }else{
@@ -120,12 +120,17 @@ function deleteStudy({id}, callback){
     });
 }
 
+function listLightStudy({search}, callback){
+    let src = `%${search.trim()}%`;
+    connection.execute(`SELECT study_name, study_id FROM tbl_study WHERE study_name LIKE ? ORDER BY study_id ASC`,[src], callback);
+}
+
 function listStudy({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
         connection.execute(`SELECT * FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.execute(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
     }
 }
 
@@ -133,9 +138,9 @@ function listStudy({search, orderby, order, index, len}, callback){
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM study_name LIKE ? OR study_code LIKE ?`, [src, src], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ?`, [src, src], callback);
     }else{
-        connection.execute(`SELECT count(*) as countall FROM tbl_student`, [], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_study`, [], callback);
     }
 }
 
@@ -149,5 +154,6 @@ module.exports = {
     deleteStudy,
     listStudy,
     getStudy,
-    getAllRows
+    getAllRows,
+    listLightStudy
 };

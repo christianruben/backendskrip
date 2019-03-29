@@ -4,18 +4,6 @@ const verifyToken = require('../verification');
 const model_teacher = require('../../model/teacher');
 const model_account = require('../../model/account');
 const upload        = require('../upload');
-// const multer = require('multer');
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'public/images/uploads');
-//     },
-//     filename: (req, file, cb)=>{
-//         cb(null, `${file.fieldname}-${Date.now()}.jpg`);
-//     }
-// });
-
-// let upload = multer({storage: storage});
 
 route.get('/', verifyToken, (req, res)=>{
     /**
@@ -29,16 +17,32 @@ route.get('/', verifyToken, (req, res)=>{
     let data_rows;
     model_teacher.listTeacher({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
         if(err){
-            return res.status(500).send({response: null, message: err.message})
+            return res.status(500).send({response: null, message: err.message});
         }
         data_rows = result;
         model_teacher.getAllRows(search, (err, result, field)=>{
             if(err){
                 return res.status(500).send({response: null, message: err.message})
             }
-            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+            return res.status(200).send({response: {table: data_rows, len: result[0].countall}, message: null});
         })
     });
+});
+
+route.get('/light', verifyToken, (req, res)=>{
+    let search = req.query.search;
+    let data_rows = [];
+    model_teacher.listLightTeacher({search: search}, (err, result, field)=>{
+        if(err){
+            data_rows = [];
+        }else{
+            let arr = JSON.parse(JSON.stringify(result));
+            arr.forEach(element => {
+                data_rows.push({value: `${element.NIP} - ${element.name}`, id: element.teacher_id});
+            });
+        }
+        return res.status(200).send({response: data_rows});
+    })
 });
 
 route.get('/:id', verifyToken, (req, res, next)=>{

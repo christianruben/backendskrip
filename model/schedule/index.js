@@ -58,12 +58,12 @@ function setType({type, id}, callback){
     });
 }
 
-function updateSchedule({Class, day, teacher, time, end}, callback){
+function updateSchedule({id, Class, day, teacher, study, type, time}, callback){
     let result = {
         status: 0,
         err: "Terjadi kesalahan, gagal memperbaharui"
     }
-    connection.execute(`UPDATE tbl_schedule SET class_id = ?, day_id = ?, teacher_id = ?, study_id = ?, time = ? WHERE schedule_id = ?`, [Class, day, teacher, study, time, id], (err, res)=>{
+    connection.execute(`UPDATE tbl_schedule SET class_id = ?, day_id = ?, teacher_id = ?, study_id = ?, type = ?, time = ? WHERE schedule_id = ?`, [Class, day, teacher, study, type, time, id], (err, res)=>{
         if(err){
             result = {
                 status: -1,
@@ -178,7 +178,7 @@ function getAllRowsSchedule(search, callback){
     }
 }
 
-function listScheduleClass({Class, search, orderby, order, orderby2, order2, index, len}, callback){
+function listScheduleClass({Class, search, orderby, order, index, len}, callback){
     let query = `SELECT 
                     ts.schedule_id,
                     tti.time_id,
@@ -194,7 +194,7 @@ function listScheduleClass({Class, search, orderby, order, orderby2, order2, ind
                         INNER JOIN tbl_day as td ON ts.day_id = td.day_id
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
-                        WHERE tst.study_name LIKE ? AND ts.class_id = ? ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ${index},${len}`;
+                        WHERE tst.study_name LIKE ? AND ts.class_id = ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`;
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
         connection.execute(query, [src, Class], callback);
@@ -215,8 +215,7 @@ function listScheduleClass({Class, search, orderby, order, orderby2, order2, ind
                         INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id
                         INNER JOIN tbl_teacher as tt ON tt.teacher_id = ts.teacher_id
                         WHERE ts.class_id = ? 
-                        ORDER BY ${orderby} ${order}, ${orderby2} ${order2} LIMIT ${index},${len}`;
-        console.log(Class, index, len);
+                        ORDER BY ${orderby} ${order} LIMIT ${index},${len}`;
         connection.execute(query, [Class], callback);
     }
 }
@@ -328,5 +327,8 @@ module.exports = {
     updateSchedule,
     setType,
     createSchedule,
-    listScheduleAll
+    listScheduleAll,
+    getAllRowsSchedule,
+    getAllRowsScheduleClass,
+    getAllRowsScheduleTeacher
 };

@@ -1,42 +1,109 @@
 const express = require('express');
 const route = express.Router();
 const verifyToken = require('../verification');
-const schedule_model = require('../../model/schedule');
+const model_schedule = require('../../model/schedule');
 
-route.get('/', (req, res, next)=>{
-    req.admin = true;
+route.get('/', verifyToken, (req, res)=>{
     if(req.admin){
-        schedule_model.listScheduleAll({search: "", orderby: "schedule_id", order: "ASC", index: 0, len: 20}, (err, result, field)=>{
+        let search = req.query.search;
+        let sortby = req.query.sortby;
+        let sort   = req.query.sort;
+        let rows   = req.query.rows;
+        let index  = (req.query.page - 1) * rows;
+        let data_rows;
+        model_schedule.listScheduleAll({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
             if(err){
-                return res.status(500).send({auth: false, msg: "internal server error"});
+                return res.status(500).send({response: null, message: err.message});
             }else{
-                res.status(200).send({auth: true, msg: null, data: result})
+                data_rows = result;
+                model_schedule.getAllRowsSchedule(search, (err, result, field)=>{
+                    if(err){
+                        return res.status(500).send({response: null, message: err.message});
+                    }
+                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                });
             }
         });
     }else{
-        res.status(400).send({auth: false, msg: "authoration failed"});
+        return res.status(401).send({auth: false, msg: "authoration failed"});
     }
 });
 
-route.get('/student', verifyToken, (req, res, next)=>{
-    /**
-     * get schedule student list
-     */
+route.get('/:id', verifyToken, (req, res)=>{
+    let id = req.params.id;
+    model_schedule.getDetailSchedule({id: id}, (err, result, field)=>{
+        if(err){
+            return res.status(500).send({response: null, message: err.message});
+        }
+        if(result.length > 0){
+            return res.status(200).send({response: result, message: null});
+        }else{
+            return res.status(400).send({response: null, message: 'Jadwal Tidak ditemukan'});
+        }
+    }); 
 });
 
-route.get('/teacher', verifyToken, (req, res, next)=>{
+route.get('/teacher', verifyToken, (req, res)=>{
     /**
      * get schedule teacher list
      */
+    if(req.teacher){
+        let id = req.ownId;
+        let search = req.query.search;
+        let sortby = req.query.sortby;
+        let sort   = req.query.sort;
+        let rows   = req.query.rows;
+        let index  = (req.query.page - 1) * rows;
+        let data_rows;
+        model_schedule.listScheduleTeacher({id: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
+            if(err){
+                return res.status(500).send({response: null, message: err.message});
+            }else{
+                data_rows = result;
+                model_schedule.getAllRowsScheduleTeacher(search, (err, result, field)=>{
+                    if(err){
+                        return res.status(500).send({response: null, message: err.message});
+                    }
+                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                });
+            }
+        });
+    }else{
+        return res.status(401).send({auth: false, msg: "authoration failed"});
+    }
 });
 
-route.get('/student/class/:id', verifyToken, (req, res, next)=>{
+route.get('/student/class/:id', verifyToken, (req, res)=>{
     /**
      * get schedule student by class
      */
+    if(req.teacher){
+        let id = req.query.id;
+        let search = req.query.search;
+        let sortby = req.query.sortby;
+        let sort   = req.query.sort;
+        let rows   = req.query.rows;
+        let index  = (req.query.page - 1) * rows;
+        let data_rows;
+        model_schedule.listScheduleClass({Class: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
+            if(err){
+                return res.status(500).send({response: null, message: err.message});
+            }else{
+                data_rows = result;
+                model_schedule.getAllRowsScheduleTeacher(search, (err, result, field)=>{
+                    if(err){
+                        return res.status(500).send({response: null, message: err.message});
+                    }
+                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                });
+            }
+        });
+    }else{
+        return res.status(401).send({auth: false, msg: "authoration failed"});
+    }
 });
 
-route.post('/', verifyToken, (req, res, next)=>{
+route.post('/', verifyToken, (req, res)=>{
     if(req.admin){
         let classid = req.body.classid;
         let dayid = req.body.dayid;
@@ -44,74 +111,53 @@ route.post('/', verifyToken, (req, res, next)=>{
         let studyid = req.body.studyid;
         let type = req.body.type;
         let time = req.body.time;
-    }else{
-        res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
-    }
-});
-
-route.post('/student', verifyToken, (req, res, next)=>{
-    /**
-     * create schedule student
-     */
-    if(req.admin){
-
-    }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
-    }
-});
-
-route.post('/teacher', verifyToken, (req, res, next)=>{
-    /**
-     * create schedule teacher
-     */
-    if(req.admin){
-
-    }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
-    }
-});
-
-route.delete('/student', verifyToken, (req, res, next)=>{
-    /**
-     * delete schedule student
-     */
-    if(req.admin){
-
-    }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
-    }
-});
-
-route.delete('/teacher', verifyToken, (req, res, next)=>{
-    /**
-     * delete schedule teacher
-     */
-    if(req.admin){
         
+        model_schedule.createSchedule({Class: classid, day: dayid, teacher: teacherid, study: studyid, type: type, time: time}, response=>{
+            if(response.status == 1){
+                return res.status(200).send({response: true, message: null});
+            }else{
+                return res.status(500).send({response: false, message: response.err});
+            }
+        });
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
-route.put('/student', verifyToken, (req, res, next)=>{
-    /**
-     * update schedule student
-     */
+route.delete('/', verifyToken, (req, res)=>{
     if(req.admin){
-
+        let id = req.body.id;
+        model_schedule.deleteSchedule({id: id}, response=>{
+            if(response.status == 1){
+                return res.status(200).send({response: true, message: null});
+            }else{
+                return res.status(500).send({response: false, message: response.err});
+            }
+        });
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 
-route.put('/teacher', verifyToken, (req, res, next)=>{
-    /**
-     * update schedule teacher
-     */
+route.put('/', verifyToken, (req, res)=>{
     if(req.admin){
+        let id = req.body.id;
+        let classid = req.body.classid;
+        let dayid = req.body.dayid;
+        let teacherid = req.body.teacherid;
+        let studyid = req.body.studyid;
+        let type = req.body.type;
+        let time = req.body.time;
 
+        model_schedule.updateSchedule({id: id, Class: classid, day: dayid, teacher: teacherid, study: studyid, type: type, time: time}, response=>{
+            if(response.status == 1){
+                return res.status(200).send({response: true, message: null});
+            }else{
+                return res.status(500).send({response: false, message: response.err});
+            }
+        });
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(402).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 

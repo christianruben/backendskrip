@@ -5,7 +5,7 @@ const util = require('../../util');
  * @author kristian ruben sianturi
  * manage data in tbl_teacher
  */
-const selectField = `tt.NIP, tt.name, tt.gender, tt.religion, tt.born_place, tt.born_date, tt.address, tt.address, tt.phone_number, tt.relationship`;
+const selectField = `tt.teacher_id, tt.NIP, tt.name, tt.gender, tt.religion, tt.born_place, tt.born_date, tt.address, tt.address, tt.phone_number, tt.relationship`;
 
 function createTeacher({nip, name, gender, religion, born_place, born_date, address, phone_number, relationship}, callback){
     let result = {
@@ -58,9 +58,7 @@ function updateTeacher({id, nip, name, gender, religion, born_place, born_date, 
         status: 0,
         err: "Terjadi kesalahan, tidak berhasil memperbaharui"
     }
-    console.log(id)
     connection.execute(`SELECT * FROM tbl_teacher WHERE teacher_id = ?`, [id], (err, res, field)=>{
-        console.log(err)
         if(err){
             result = {
                 status: -1,
@@ -77,7 +75,6 @@ function updateTeacher({id, nip, name, gender, religion, born_place, born_date, 
             }else{
                 let val = [nip, name, gender, religion, born_place, born_date, address, phone_number, relationship, id];
                 connection.execute(`UPDATE tbl_teacher SET NIP = ?, name = ?, gender = ?, religion = ?, born_place = ?, born_date = ?, address = ?, phone_number = ?, relationship = ? WHERE teacher_id = ?`,val, (err, res)=>{
-                    console.log(err)
                     if(err){
                         result = {
                             status: -1,
@@ -107,7 +104,6 @@ function deleteTeacher({id}, callback){
         err: "Terjadi kesalahan, gagal menghapus"
     }
     connection.execute(`DELETE FROM tbl_teacher WHERE teacher_id IN(?)`, [id], (err, res)=>{
-        console.log(err);
         if(err){
             result = {
                 status: -1,
@@ -115,7 +111,6 @@ function deleteTeacher({id}, callback){
             }
             callback(result);
         }else{
-            console.log(res.affectedRows);
             if(res.affectedRows > 0){
                 result = {
                     status: 1,
@@ -127,6 +122,11 @@ function deleteTeacher({id}, callback){
             }
         }
     });
+}
+
+function listLightTeacher({search}, callback){
+    let src = `%${search.trim()}%`;
+    connection.execute(`SELECT name, teacher_id, NIP FROM tbl_teacher WHERE NIP LIKE ? ORDER BY NIP ASC`,[src], callback);
 }
 
 function listTeacher({search, orderby, order, index, len}, callback){
@@ -153,5 +153,6 @@ module.exports = {
     updateTeacher,
     deleteTeacher,
     listTeacher,
-    getAllRows
+    getAllRows,
+    listLightTeacher
 };

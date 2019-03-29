@@ -83,17 +83,17 @@ route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
         if(req.file){
             filename = req.file.filename;
         }
-        let NIS = req.body.nis;
-        let name = req.body.name;
-        let gender = req.body.gender;
-        let religion = req.body.religion;
-        let bornPlace = req.body.bornPlace;
-        let bornDate = req.body.bornDate;
-        let fatherName = req.body.fatherName;
-        let motherName = req.body.motherName;
-        let address = req.body.address;
+        let NIS         = req.body.nis;
+        let name        = req.body.name;
+        let gender      = req.body.gender.toLowerCase();
+        let religion    = req.body.religion;
+        let bornPlace   = req.body.bornPlace;
+        let bornDate    = req.body.bornDate;
+        let fatherName  = req.body.fatherName;
+        let motherName  = req.body.motherName;
+        let address     = req.body.address;
         let phoneNumber = req.body.phoneNumber;
-        let classid = req.body.classid;
+        let classid     = req.body.classid;
         model_student.createStudent(
             {
                 nis: NIS, 
@@ -152,25 +152,25 @@ route.delete('/', verifyToken, (req, res, next)=>{
     }
 });
 
-route.put('/', verifyToken, (req, res, next)=>{
+route.put('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     // update student
     if(req.admin || req.student){
         let filename = null;
         if(req.file){
             filename = req.file.filename;
         }
-        let id = req.body.id
-        let NIS = req.body.nis;
-        let name = req.body.name;
-        let gender = req.body.gender;
-        let religion = req.body.religion;
-        let bornPlace = req.body.bornPlace;
-        let bornDate = req.body.bornDate;
-        let fatherName = req.body.fatherName;
-        let motherName = req.body.motherName;
-        let address = req.body.address;
+        let id          = req.body.id
+        let NIS         = req.body.nis;
+        let name        = req.body.name;
+        let gender      = req.body.gender.toLowerCase();
+        let religion    = req.body.religion;
+        let bornPlace   = req.body.bornPlace;
+        let bornDate    = req.body.bornDate;
+        let fatherName  = req.body.fatherName;
+        let motherName  = req.body.motherName;
+        let address     = req.body.address;
         let phoneNumber = req.body.phoneNumber;
-        let classid = req.body.classid;
+        let classid     = req.body.classid;
         model_student.updateStudent(
             {
                 id: id, 
@@ -194,16 +194,17 @@ route.put('/', verifyToken, (req, res, next)=>{
                             }else{
                                 return res.status(500).send({data: false, message: response.err});
                             }
-                        })
+                        });
+                    }else{
+                        return res.status(200).send({data: true, message: null});
                     }
-                    return res.status(200).send({data: true, message: null});
                 }else{
                     return res.status(500).send({data: false, message: response.err});
                 }
             }
         )
     }else{
-        res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
+        return res.status(500).send({auth: false, message: 'Failed to authenticate token.'});
     }
 });
 

@@ -13,7 +13,6 @@ route.get('/', (req, res, next)=>{
     //     }else{
         schedule_model.listScheduleClass({Class: 1, search: "", orderby: "time", order: "ASC", orderby2: "day_id", order2: "ASC", index: 0, len: 10}, (err, result, field)=>{
             if(err){
-                console.log(err);
                 res.status(500).send("Terjadi kesalahan dalam server");
             }else{
                 let table = {senin:[], selasa: [], rabu: [], kamis: [], jumat: []};

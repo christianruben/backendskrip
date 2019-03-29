@@ -6,7 +6,7 @@ const auth = require('./src/auth/AuthController');
 const report = require('./src/report');
 var cors = require('cors');
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 app.set('views', __dirname+"/views");

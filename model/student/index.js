@@ -5,7 +5,7 @@ const util = require('../../util');
  * @author kristian ruben sianturi
  * manage data in tbl_student
  */
-const selectField = `ts.NIS, ts.name, ts.gender, ts.religion, ts.born_place, ts.born_date, ts.address, ts.address, ts.phone_number, ts.father_name, ts.mother_name`;
+const selectField = `ts.student_id, ts.NIS, ts.name, ts.gender, ts.religion, ts.born_place, ts.born_date, ts.address, ts.address, ts.phone_number, ts.father_name, ts.mother_name`;
 
 function createStudent({nis, name, gender, religion, born_place, born_date, father_name, mother_name, address, phone_number, class_id}, callback){
     let result = {
@@ -13,7 +13,6 @@ function createStudent({nis, name, gender, religion, born_place, born_date, fath
         err: "Terjadi kesalahan, NIS yang dimasukan sudah terdaftar sebelumnya"
     }
     connection.execute(`SELECT * FROM tbl_student WHERE NIS = ?`, [nis], (err, res, field)=>{
-        console.log(err, nis)
         if(err){
             result = {
                 status: -1,
@@ -21,13 +20,11 @@ function createStudent({nis, name, gender, religion, born_place, born_date, fath
             }
             callback(result);
         }else{
-            console.log(res)
             if(res.length > 0){
                 callback(result);
             }else{
                 let val = [nis, name, gender, religion, born_place, born_date, father_name, mother_name, address, phone_number, class_id, util.getDateNow()];
                 connection.execute(`INSERT INTO tbl_student(NIS, name, gender, religion, born_place, born_date, father_name, mother_name, address, phone_number, class_id, datecreated) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`, val, (err, res)=>{
-                    console.log(err)
                     if(err){
                         result = {
                             status: -1,
@@ -156,7 +153,7 @@ function listStudent({search, orderby, order, index, len}, callback){
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE NIS LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
     }else{
         connection.execute(`SELECT count(*) as countall FROM tbl_student`, [], callback);
     }
@@ -165,7 +162,7 @@ function getAllRows(search, callback){
 function getAllRowsClass(classid, search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE class_id = ? NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [classid,src, src, src, src, src], callback);
+        connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE class_id = ? AND (NIS LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?)`, [classid,src, src, src, src, src], callback);
     }else{
         connection.execute(`SELECT count(*) as countall FROM tbl_student WHERE class_id = ?`, [classid], callback);
     }
@@ -183,5 +180,6 @@ module.exports = {
     listStudent,
     getStudent,
     getAllRows,
-    getAllRowsClass
+    getAllRowsClass,
+    listClassStudent
 };
