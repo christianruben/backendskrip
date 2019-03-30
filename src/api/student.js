@@ -13,16 +13,16 @@ route.get('/', verifyToken, (req, res, next)=>{
     let rows   = req.query.rows;
     let index  = (req.query.page - 1) * rows;
     let data_rows;
-    model_student.listStudent({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-        if(err){
-            return res.status(500).send({response: null, message: err.message})
+    model_student.listStudent({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+        if(result.err){
+            return res.status(500).send({response: null, message: result.err.message})
         }
-        data_rows = result;
-        model_student.getAllRows(search, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        data_rows = result.res;
+        model_student.getAllRows(search, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
-            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+            return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
         })
     });
 });
@@ -30,12 +30,12 @@ route.get('/', verifyToken, (req, res, next)=>{
 route.get('/:id', verifyToken, (req, res, next)=>{
     // get student by his id
     let id = req.params.id;
-    model_account.getAccountStudent({id: id}, (err, result, field)=>{
-        if(err){
+    model_account.getAccountStudent({id: id}, (result)=>{
+        if(result.err){
             return res.status(500).send({result: null, message: 'Terjadi kesalahan dalam permintaan'});
         }
-        if(result.length > 0){
-            let {username, picture, name, phone_number, address, born_date, religion} = result[0];
+        if(result.res.length > 0){
+            let {username, picture, name, phone_number, address, born_date, religion} = result.res[0];
             return res.status(200).send({result: {
                     username: username,
                     picture: picture,
@@ -62,16 +62,16 @@ route.get('/class/:id', verifyToken, (req, res, next)=>{
     let rows   = req.query.rows;
     let index  = (req.query.page - 1) * rows;
     let data_rows;
-    model_student.listClassStudent({classid: classid, search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-        if(err){
-            return res.status(500).send({response: null, message: err.message})
+    model_student.listClassStudent({classid: classid, search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+        if(result.err){
+            return res.status(500).send({response: null, message: result.err.message})
         }
-        data_rows = result;
-        model_student.getAllRowsClass(classid, search, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        data_rows = result.res;
+        model_student.getAllRowsClass(classid, search, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
-            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+            return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
         })
     });
 });

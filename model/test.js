@@ -42,11 +42,23 @@
 //     });
 // });
 
-const sche = require('../model/schedule');
-sche.listScheduleClass({Class: 1, search: "", orderby: "time", order: "ASC", orderby2: "day_id", order2: "ASC", index: 0, len: 10}, (err, res, field)=>{
-    if(err){
-        console.log(err);
-    }else{
-        console.log(res);
-    }
-});
+// const sche = require('../model/schedule');
+// sche.listScheduleClass({Class: 1, search: "", orderby: "time", order: "ASC", orderby2: "day_id", order2: "ASC", index: 0, len: 10}, (err, res, field)=>{
+//     if(err){
+//         console.log(err);
+//     }else{
+//         console.log(res);
+//     }
+// });
+
+const conn = require('./connection');
+
+// conn.poolSelect('SELECT * FROM tbl_teacher', [], result=>{
+//     console.log(result.res);
+// });
+
+async function oi(){
+    return await conn.selectProm('SELECT * FROM tbl_teacher', []);
+}
+
+console.log(oi);

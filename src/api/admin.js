@@ -15,16 +15,16 @@ route.get('/', (req, res)=>{
         let rows   = req.query.rows;
         let index  = (req.query.page - 1) * rows;
         let data_rows;
-        model_admin.AdminList({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        model_admin.AdminList({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
-            data_rows = result;
-            model_admin.getAllRows(search, (err, result, field)=>{
-                if(err){
-                    return res.status(500).send({response: null, message: err.message});
+            data_rows = result.res;
+            model_admin.getAllRows(search, (result)=>{
+                if(result.err){
+                    return res.status(500).send({response: null, message: result.err.message});
                 }
-                return res.status(200).send({response: {table: data_rows, len: Math.floor(result[0].countall/rows)}});
+                return res.status(200).send({response: {table: data_rows, len: Math.floor(result.res[0].countall/rows)}});
             });
         });
     }else{
@@ -38,13 +38,13 @@ route.get('/:id',verifyToken, (req, res)=>{
      */
     if(req.admin){
         let id = req.params.id;
-        model_admin.getAdmin({id: id}, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        model_admin.getAdmin({id: id}, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
 
-            if(result.length > 0){
-                const {firstname, lastname, username, picture} = result[0];
+            if(result.res.length > 0){
+                const {firstname, lastname, username, picture} = result.res[0];
                 return res.status(200).send({
                     response: {
                         username: username,

@@ -11,16 +11,16 @@ route.get('/', verifyToken, (req, res)=>{
         let rows   = req.query.rows;
         let index  = (req.query.page - 1) * rows;
         let data_rows;
-        model_schedule.listScheduleAll({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message});
+        model_schedule.listScheduleAll({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message});
             }else{
-                data_rows = result;
-                model_schedule.getAllRowsSchedule(search, (err, result, field)=>{
-                    if(err){
-                        return res.status(500).send({response: null, message: err.message});
+                data_rows = result.res;
+                model_schedule.getAllRowsSchedule(search, (result)=>{
+                    if(result.err){
+                        return res.status(500).send({response: null, message: result.err.message});
                     }
-                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                    return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
                 });
             }
         });
@@ -31,12 +31,12 @@ route.get('/', verifyToken, (req, res)=>{
 
 route.get('/:id', verifyToken, (req, res)=>{
     let id = req.params.id;
-    model_schedule.getDetailSchedule({id: id}, (err, result, field)=>{
-        if(err){
-            return res.status(500).send({response: null, message: err.message});
+    model_schedule.getDetailSchedule({id: id}, (result)=>{
+        if(result.err){
+            return res.status(500).send({response: null, message: result.err.message});
         }
-        if(result.length > 0){
-            return res.status(200).send({response: result, message: null});
+        if(result.res.length > 0){
+            return res.status(200).send({response: result.res, message: null});
         }else{
             return res.status(400).send({response: null, message: 'Jadwal Tidak ditemukan'});
         }
@@ -55,16 +55,16 @@ route.get('/teacher', verifyToken, (req, res)=>{
         let rows   = req.query.rows;
         let index  = (req.query.page - 1) * rows;
         let data_rows;
-        model_schedule.listScheduleTeacher({id: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message});
+        model_schedule.listScheduleTeacher({id: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message});
             }else{
-                data_rows = result;
-                model_schedule.getAllRowsScheduleTeacher(search, (err, result, field)=>{
-                    if(err){
-                        return res.status(500).send({response: null, message: err.message});
+                data_rows = result.res;
+                model_schedule.getAllRowsScheduleTeacher(search, (result)=>{
+                    if(result.err){
+                        return res.status(500).send({response: null, message: result.err.message});
                     }
-                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                    return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
                 });
             }
         });
@@ -85,16 +85,16 @@ route.get('/student/class/:id', verifyToken, (req, res)=>{
         let rows   = req.query.rows;
         let index  = (req.query.page - 1) * rows;
         let data_rows;
-        model_schedule.listScheduleClass({Class: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message});
+        model_schedule.listScheduleClass({Class: id, search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message});
             }else{
-                data_rows = result;
-                model_schedule.getAllRowsScheduleTeacher(search, (err, result, field)=>{
+                data_rows = result.res;
+                model_schedule.getAllRowsScheduleTeacher(search, (result)=>{
                     if(err){
-                        return res.status(500).send({response: null, message: err.message});
+                        return res.status(500).send({response: null, message: result.err.message});
                     }
-                    return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+                    return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
                 });
             }
         });

@@ -11,30 +11,30 @@ function createStudy({study_name, study_code}, callback){
         status: 0,
         err: "Terjadi kesalahan, gagal menyimpan"
     }
-    connection.execute(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (err, res, field)=>{
-        if(err){
+    connection.poolSelect(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan dalam server"
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.res.length > 0){
                 result = {
                     status: 0,
                     err: "kode pelajaran sudah terdaftar"
                 }
                 callback(result);
             }else{
-                connection.execute(`INSERT INTO tbl_study(study_name, study_code, datecreated) VALUES(?,?,?)`, [study_name, study_code, util.getDateNow()], (err, res)=>{
-                    if(err){
+                connection.poolManipulate(`INSERT INTO tbl_study(study_name, study_code, datecreated) VALUES(?,?,?)`, [study_name, study_code, util.getDateNow()], (res)=>{
+                    if(res.err){
                         result = {
                             status: -1,
                             err: "Terjadi kesalahan dalam server"
                         }
                         callback(result);
                     }else{
-                        if(res.affectedRows > 0){
+                        if(res.res.affectedRows > 0){
                             result = {
                                 status: 1,
                                 err: null
@@ -55,30 +55,30 @@ function updateStudy({study_name, study_code, id}, callback){
         status: 0,
         err: "Terjadi kesalahan, gagal memperbaharui"
     }
-    connection.execute(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (err, res, field)=>{
-        if(err){
+    connection.poolSelect(`SELECT * FROM tbl_study WHERE study_code = ?`, [study_code], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan dalam server"
             }
             callback(result);
         }else{
-            if(res.length < 0){
+            if(res.res.length < 0){
                 result = {
                     status: 0,
                     err: "kode pelajaran belum terdaftar"
                 }
                 callback(result);
             }else{
-                connection.execute(`UPDATE tbl_study SET study_name = ?, study_code = ? WHERE study_id = ?`, [study_name, study_code, id], (err, res)=>{
-                    if(err){
+                connection.poolManipulate(`UPDATE tbl_study SET study_name = ?, study_code = ? WHERE study_id = ?`, [study_name, study_code, id], (res)=>{
+                    if(res.err){
                         result = {
                             status: -1,
                             err: "Terjadi kesalahan dalam server"
                         }
                         callback(result);
                     }else{
-                        if(res.affectedRows > 0){
+                        if(res.res.affectedRows > 0){
                             result = {
                                 status: 1,
                                 err: null
@@ -99,15 +99,15 @@ function deleteStudy({id}, callback){
         status: 0,
         err: "Terjadi kesalahan, gagal menghapus"
     }
-    connection.execute(`DELETE FROM tbl_study WHERE study_id IN(?)`, [id], (err, res)=>{
-        if(err){
+    connection.poolManipulate(`DELETE FROM tbl_study WHERE study_id IN(?)`, [id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan dalam server"
             }
             callback(result);
         }else{
-            if(res.affectedRows > 0){
+            if(res.res.affectedRows > 0){
                 result = {
                     status: 1,
                     err: null
@@ -122,15 +122,15 @@ function deleteStudy({id}, callback){
 
 function listLightStudy({search}, callback){
     let src = `%${search.trim()}%`;
-    connection.execute(`SELECT study_name, study_id FROM tbl_study WHERE study_name LIKE ? ORDER BY study_id ASC`,[src], callback);
+    connection.poolSelect(`SELECT study_name, study_id FROM tbl_study WHERE study_name LIKE ? ORDER BY study_id ASC`,[src], callback);
 }
 
 function listStudy({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT * FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src], callback);
+        connection.poolSelect(`SELECT * FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
+        connection.poolSelect(`SELECT * FROM tbl_study ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
     }
 }
 
@@ -138,14 +138,14 @@ function listStudy({search, orderby, order, index, len}, callback){
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ?`, [src, src], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_study WHERE study_name LIKE ? OR study_code LIKE ?`, [src, src], callback);
     }else{
-        connection.execute(`SELECT count(*) as countall FROM tbl_study`, [], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_study`, [], callback);
     }
 }
 
 function getStudy({id}, callback){
-    connection.execute(`SELECT * FROM tbl_study WHERE study_id = ?`, [id], callback);
+    connection.poolSelect(`SELECT * FROM tbl_study WHERE study_id = ?`, [id], callback);
 }
 
 module.exports = {

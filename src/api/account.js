@@ -13,15 +13,15 @@ route.get('/', verifyToken, (req, res, next)=>{
 route.get('/teacher/:id', verifyToken, (req, res, next)=>{
     // get detail news
     const id = req.params.id;
-    user_model.getAccountTeacher({id: id}, (err, res, field)=>{
-        if(err){
+    user_model.getAccountTeacher({id: id}, (result)=>{
+        if(result.err){
             return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
         }else{
-            if(res.length > 0){
+            if(result.res.length > 0){
                 let data = {
-                    name: res[0].name,
-                    picture: res[0].picture,
-                    username: res[0].username
+                    name: result.res[0].name,
+                    picture: result.res[0].picture,
+                    username: result.res[0].username
                 }
                 return res.status(200).send({auth: true, message: null, data: data});
             }else{
@@ -33,15 +33,15 @@ route.get('/teacher/:id', verifyToken, (req, res, next)=>{
 
 route.get('/student/:id', verifyToken, (req, res, next)=>{
     const id = req.params.id;
-    user_model.getAccountTeacher({id: id}, (err, res, field)=>{
-        if(err){
+    user_model.getAccountTeacher({id: id}, (result)=>{
+        if(result.err){
             return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
         }else{
-            if(res.length > 0){
+            if(result.res.length > 0){
                 let data = {
-                    name: res[0].name,
-                    picture: res[0].picture,
-                    username: res[0].username
+                    name: result.res[0].name,
+                    picture: result.res[0].picture,
+                    username: result.res[0].username
                 }
                 return res.status(200).send({auth: true, message: null, data: data});
             }else{
@@ -53,14 +53,14 @@ route.get('/student/:id', verifyToken, (req, res, next)=>{
 
 route.get('/me', verifyToken, (req, res, next)=>{
     if(req.admin){
-        admin_model.getAdmin({id:req.userId}, (err, res, field)=>{
-            if(err){
+        admin_model.getAdmin({id:req.userId}, (result)=>{
+            if(result.err){
                 return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
             }else{
-                if(res.length > 0){
+                if(result.res.length > 0){
                     let data = {
-                        name: `${res[0].firstname} ${res[0].lastname}`,
-                        picture: res[0].picture
+                        name: `${result.res[0].firstname} ${result.res[0].lastname}`,
+                        picture: result.res[0].picture
                     }
                     return res.status(200).send({auth: true, message: null, data: data});
                 }else{
@@ -70,15 +70,15 @@ route.get('/me', verifyToken, (req, res, next)=>{
         });
     }else{
         if(req.teacher){
-            user_model.getAccountTeacher({id: req.userId}, (err, res, field)=>{
-                if(err){
+            user_model.getAccountTeacher({id: req.userId}, (result)=>{
+                if(result.err){
                     return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
                 }else{
-                    if(res.length > 0){
+                    if(result.res.length > 0){
                         let data = {
-                            name: res[0].name,
-                            picture: res[0].picture,
-                            username: res[0].username
+                            name: result.res[0].name,
+                            picture: result.res[0].picture,
+                            username: result.res[0].username
                         }
                         return res.status(200).send({auth: true, message: null, data: data});
                     }else{
@@ -88,15 +88,15 @@ route.get('/me', verifyToken, (req, res, next)=>{
             });
         }
         if(req.student){
-            user_model.getAccountStudent({id: req.userId}, (err, res, field)=>{
-                if(err){
+            user_model.getAccountStudent({id: req.userId}, (result)=>{
+                if(result.err){
                     return res.status(500).send({auth: false, message: 'Failed to load data', data: null});
                 }else{
-                    if(res.length > 0){
+                    if(result.res.length > 0){
                         let data = {
-                            name: res[0].name,
-                            picture: res[0].picture,
-                            username: res[0].username
+                            name: result.res[0].name,
+                            picture: result.res[0].picture,
+                            username: result.res[0].username
                         }
                         return res.status(200).send({auth: true, message: null, data: data});
                     }else{

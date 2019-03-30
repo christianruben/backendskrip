@@ -11,7 +11,7 @@ function createClass({class_name, department}, callback){
         status : 0,
         err: "Nama Kelas sudah ada dalam database"
     }
-    connection.execute(`SELECT * FROM tbl_class WHERE class_name = ?`, [class_name], (err, res, field)=>{
+    connection.poolSelect(`SELECT * FROM tbl_class WHERE class_name = ?`, [class_name], (res)=>{
         if(err){
             result = {
                 status: -1,
@@ -19,11 +19,11 @@ function createClass({class_name, department}, callback){
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.res.length > 0){
                 callback(result);
             }else{
-                connection.execute(`INSERT INTO tbl_class(class_name, department_id, datecreated) VALUES(?,?,?)`, [class_name, department, util.getDateNow()], (err, res)=>{
-                    if(err){
+                connection.poolManipulate(`INSERT INTO tbl_class(class_name, department_id, datecreated) VALUES(?,?,?)`, [class_name, department, util.getDateNow()], (res)=>{
+                    if(res.err){
                         result = {
                             status: -1,
                             err: "Terjadi Kesalahan pada server"
@@ -55,8 +55,8 @@ function deleteClass({id}, callback){
         status: 0,
         err: "Gagal menghapus"
     }
-    connection.execute(`DELETE FROM tbl_class WHERE class_id IN(?)`, [id], (err, res)=>{
-        if(err){
+    connection.poolManipulate(`DELETE FROM tbl_class WHERE class_id IN(?)`, [id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
@@ -77,15 +77,15 @@ function deleteClass({id}, callback){
 }
 
 function loadAll(callback){
-    connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY class_id ASC`, [], callback);
+    connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY class_id ASC`, [], callback);
 }
 
 function listClass({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
+        connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
     }else{
-        connection.execute(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
@@ -93,9 +93,9 @@ function listClass({search, orderby, order, index, len}, callback){
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM tbl_class WHERE class_name LIKE ?`, [src], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_class WHERE class_name LIKE ?`, [src], callback);
     }else{
-        connection.execute(`SELECT count(*) as countall FROM tbl_class`, [], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_class`, [], callback);
     }
 }
 

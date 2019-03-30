@@ -10,16 +10,16 @@ route.get('/', verifyToken, (req, res, next)=>{
     let index  = (req.query.page - 1) * rows;
     let data_rows;
     
-    model_news.listNews({search: search_query, orderby: "datecreated", order: "ASC", len: rows}, (err, result, field)=>{
-        if(err){
-            return res.status(500).send({response: null, message: err.message})
+    model_news.listNews({search: search_query, orderby: "datecreated", order: "ASC", len: rows}, (result)=>{
+        if(result.err){
+            return res.status(500).send({response: null, message: result.err.message})
         }
         data_rows = result;
-        model_news.getAllRows(search_query, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        model_news.getAllRows(search_query, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
-            return res.status(200).send({response: {table: data_rows, len: result[0].countall}});
+            return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}});
         });
     });
     

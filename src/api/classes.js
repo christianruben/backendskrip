@@ -8,17 +8,17 @@ route.get('/', verifyToken, (req, res, next)=>{
     if(!req.admin){
         return res.status(500).send({response: null, message: 'Failed to authenticate token.'});
     }
-    model_class.loadAll((err, result, field)=>{
-        if(err){
+    model_class.loadAll((result)=>{
+        if(result.err){
             return res.status(500).send({response: null, message: err});
         }
         if(res){
-            let arr = JSON.parse(JSON.stringify(result));
+            let arr = JSON.parse(JSON.stringify(result.res));
             let send = []
             arr.forEach(element => {
                 send.push({'name': element.class_name, 'id': element.class_id, 'dept': element.department_id})
             });
-            return res.status(200).send({response: JSON.stringify(send), message: err});
+            return res.status(200).send({response: JSON.stringify(send), message: result.err});
         }else{
             return res.status(500).send({response: null, message: 'Tidak ada data'});
         }

@@ -15,16 +15,16 @@ route.get('/', verifyToken, (req, res)=>{
     let rows   = req.query.rows;
     let index  = (req.query.page - 1) * rows;
     let data_rows;
-    model_teacher.listTeacher({search: search, orderby: sortby, order: sort, index: index, len: rows}, (err, result, field)=>{
-        if(err){
-            return res.status(500).send({response: null, message: err.message});
+    model_teacher.listTeacher({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+        if(result.err){
+            return res.status(500).send({response: null, message: result.err.message});
         }
-        data_rows = result;
-        model_teacher.getAllRows(search, (err, result, field)=>{
-            if(err){
-                return res.status(500).send({response: null, message: err.message})
+        data_rows = result.res;
+        model_teacher.getAllRows(search, (result)=>{
+            if(result.err){
+                return res.status(500).send({response: null, message: result.err.message})
             }
-            return res.status(200).send({response: {table: data_rows, len: result[0].countall}, message: null});
+            return res.status(200).send({response: {table: data_rows, len: result.res[0].countall}, message: null});
         })
     });
 });

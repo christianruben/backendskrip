@@ -11,23 +11,23 @@ const Auth = (username, password, callback)=>{
         status: 0,
         err: "akun tidak dapat di temukan"
     }
-    connection.execute('SELECT * FROM tbl_admin WHERE username = ?', [username], (err, res, field)=>{
-        if(err){
+    connection.poolSelect('SELECT * FROM tbl_admin WHERE username = ?', [username], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.length > 0){
-                let hashpass = res[0].password;
+            if(res.res.length > 0){
+                let hashpass = res.res[0].password;
                 util.passValidate(hashpass, password, (stat)=>{
                     if(stat){
                         result = {
                             status: 1,
                             err: null,
                             data: {
-                                id: res[0].admin_id
+                                id: res.res[0].admin_id
                             }
                         }
                         callback(result);
@@ -53,26 +53,26 @@ const CreateAdmin = ({firstname, secondname, username, password, image}, callbac
         status: 0,
         err: "Username yang dimasukan sudah terdaftar"
     }
-    connection.execute('SELECT admin_id FROM tbl_admin WHERE username = ?', [username], (err, res, field)=>{
-        if(err){
+    connection.execute('SELECT admin_id FROM tbl_admin WHERE username = ?', [username], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.res.length > 0){
                 callback(result);
             }else{
-                connection.execute('INSERT INTO tbl_admin(firstname, lastname, username, password, picture, datecreate) VALUES(?, ?, ?, ?, ?, ?)', [firstname, secondname, username, encryptpass, image, datenow], (err, res)=> {
-                    if(err){
+                connection.poolManipulate('INSERT INTO tbl_admin(firstname, lastname, username, password, picture, datecreate) VALUES(?, ?, ?, ?, ?, ?)', [firstname, secondname, username, encryptpass, image, datenow], (res)=> {
+                    if(res.err){
                         result = {
                             status: -1,
                             err: "Terjadi kesalahan pada server"
                         }
                         callback(result);
                     }else{
-                        if(res.affectedRows > 0){
+                        if(res.res.affectedRows > 0){
                             result = {
                                 status: 1,
                                 err: null
@@ -97,15 +97,15 @@ const UpdateAdmin = ({id, firstname, secondname, username}, callback)=>{
         status: 0,
         err: "Gagal untuk update"
     }
-    connection.execute('UPDATE tbl_admin SET firstname = ?, lastname = ?, username = ? WHERE admin_id = ?', [firstname, secondname, username, id], (err, res)=>{
-        if(err){
+    connection.poolManipulate('UPDATE tbl_admin SET firstname = ?, lastname = ?, username = ? WHERE admin_id = ?', [firstname, secondname, username, id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.affectedRows > 0){
+            if(res.res.affectedRows > 0){
                 result = {
                     status: 0,
                     err: null
@@ -123,15 +123,15 @@ const UpdateAdminImage = ({id, image}, callback)=>{
         status: 0,
         err: "Gagal untuk update photo"
     }
-    connection.execute('UPDATE tbl_admin SET picture = ? WHERE admin_id = ?', [image, id], (err, res)=>{
-        if(err){
+    connection.poolManipulate('UPDATE tbl_admin SET picture = ? WHERE admin_id = ?', [image, id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.affectedRows > 0){
+            if(res.res.affectedRows > 0){
                 result = {
                     status: 0,
                     err: null
@@ -152,20 +152,20 @@ const UpdateAdminPass = ({id, lastpass, newpass}, callback)=>{
         status: 0, // error
         err: "password lama anda salah",
     }
-    connection.execute('SELECT admin_id FROM tbl_admin WHERE admin_id = ? and password = ?', [id, encryptlastpass], (err, res, field) => {
-        if(err){
+    connection.poolSelect('SELECT admin_id FROM tbl_admin WHERE admin_id = ? and password = ?', [id, encryptlastpass], (res) => {
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.length > 0){
-                connection.execute('UPDATE tbl_admin SET password = ? WHERE id = ?', [encryptnewpass, id], (err, res)=>{
-                    if(err){
+            if(res.res.length > 0){
+                connection.execute('UPDATE tbl_admin SET password = ? WHERE id = ?', [encryptnewpass, id], (res)=>{
+                    if(res.err){
                         result = {
                             status: -1,
-                            err: err
+                            err: res.err
                         }
                         callback(result);
                     }else{
@@ -188,15 +188,15 @@ const DeleteAdmin = ({id}, callback)=>{
         status: 0,
         err: "Gagal menghapus"
     }
-    connection.execute('DELETE FROM tbl_admin WHERE admin_id = ?', [id], (err, res)=>{
-        if(err){
+    connection.poolManipulate('DELETE FROM tbl_admin WHERE admin_id = ?', [id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
             callback(result);
         }else{
-            if(res.affectedRows > 0){
+            if(res.res.affectedRows > 0){
                 result = {
                     status: 1,
                     err: null
@@ -212,9 +212,9 @@ const DeleteAdmin = ({id}, callback)=>{
 const AdminList = ({search, orderby, order, index, len}, callback)=>{
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.execute(`SELECT * FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [src, src], callback);
+        connection.poolSelect(`SELECT * FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [src, src], callback);
     }else{
-        connection.execute(`SELECT * FROM tbl_admin ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.poolSelect(`SELECT * FROM tbl_admin ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
     }
 }
 
@@ -222,14 +222,14 @@ const AdminList = ({search, orderby, order, index, len}, callback)=>{
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.execute(`SELECT count(*) as countall FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? username LIKE ?`, [src, src, src], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_admin WHERE firstname LIKE ? OR lastname LIKE ? username LIKE ?`, [src, src, src], callback);
     }else{
-        connection.execute(`SELECT count(*) as countall FROM tbl_admin`, [], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_admin`, [], callback);
     }
 }
 
 const getAdmin = ({id}, callback)=>{
-    connection.execute(`SELECT * FROM tbl_admin WHERE admin_id = ?`, [id], callback);
+    connection.poolSelect(`SELECT * FROM tbl_admin WHERE admin_id = ?`, [id], callback);
 }
 
 module.exports = {

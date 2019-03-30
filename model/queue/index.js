@@ -19,15 +19,15 @@ function setQueueId(type, callback){
         q: null
     }
     let queue_id = jwt.sign({type: type}, secret, {expiresIn:15*60})
-    connection.execute(`INSERT INTO tbl_queue(queue_id, datecreated) VALUES(?,?)`, [queue_id, util.getDateNow()], (err, res)=>{
-        if(err){
+    connection.poolManipulate(`INSERT INTO tbl_queue(queue_id, datecreated) VALUES(?,?)`, [queue_id, util.getDateNow()], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 q: null
             }
             callback(result);
         }else{
-            if(res.affectedRows > 0){
+            if(res.res.affectedRows > 0){
                 result = {
                     status: 1,
                     q: queue_id
@@ -45,26 +45,26 @@ function isQueueAvailable(queue_id, callback){
         status: 0,
         msg: "Halaman tidak ditemukan"
     }
-    connection.execute(`SELECT * FROM tbl_queue WHERE queue_id = ?`, [queue_id], (err, res, field)=>{
-        if(err){
+    connection.poolSelect(`SELECT * FROM tbl_queue WHERE queue_id = ?`, [queue_id], (res)=>{
+        if(res.err){
             result = {
                 status: -1,
                 msg: "Terjadi kesalahan dalam server"
             }
             callback(result);
         }else{
-            if(res.length > 0){
+            if(res.res.length > 0){
                 jwt.verify(queue_id, secret, (err, decoded)=>{
                     if(err){
                         result = {
                             status: -1,
                             msg: "Halaman yang diminta telah kadarluasa atau link tidak sesuai"
                         }
-                        connection.execute(`DELETE FROM tbl_queue WHERE queue_id = ?`, [queue_id], (err, res)=>{
-                            if(err){
+                        connection.poolManipulate(`DELETE FROM tbl_queue WHERE queue_id = ?`, [queue_id], (res)=>{
+                            if(res.err){
                                 callback(result);
                             }else{
-                                if(res.affectedRows > 0){
+                                if(res.res.affectedRows > 0){
                                     result = {
                                         status: 0,
                                         msg: "Halaman ini telah kadarluasa"
