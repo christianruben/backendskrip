@@ -13,7 +13,7 @@ route.get('/', verifyToken, (req, res, next)=>{
     let rows   = req.query.rows;
     let index  = (req.query.page - 1) * rows;
     let data_rows;
-    model_study.lis({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
+    model_study.listStudy({search: search, orderby: sortby, order: sort, index: index, len: rows}, (result)=>{
         if(result.err){
             return res.status(500).send({response: null, message: result.err.message});
         }
