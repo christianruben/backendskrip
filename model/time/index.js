@@ -56,6 +56,11 @@ function getAllList(callback){
     connection.poolSelect(`SELECT * FROM tbl_time ORDER BY time_id ASC`, [], callback);
 }
 
+function listLightTime({search}, callback){
+    let src = `%${search.trim()}%`;
+    connection.poolSelect(`SELECT time_id, time_name, CONCAT(time_start, ' - ', time_end) AS time FROM tbl_time WHERE time_name LIKE ? ORDER BY time_id ASC`,[src], callback);
+}
+
 function listTime({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         connection.poolSelect(`SELECT * FROM tbl_time WHERE time_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [search.trim()], callback);
@@ -102,6 +107,7 @@ module.exports = {
     createTime,
     deleteTime,
     listTime,
+    listLightTime,
     updateTime,
     getAllList,
     getAllRows

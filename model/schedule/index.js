@@ -115,8 +115,7 @@ function listScheduleAll({search, orderby, order, index, len}, callback){
                     ts.schedule_id,
                     tti.time_id,
                     tst.study_name, 
-                    tti.time_start, 
-                    tti.time_end, 
+                    CONCAT(tti.time_start, ' - ', tti.time_end) as study_time,
                     td.day_name,
                     tc.class_name,
                     tt.name as teacher
@@ -136,8 +135,7 @@ function listScheduleAll({search, orderby, order, index, len}, callback){
         ts.schedule_id,
         tti.time_id,
         tst.study_name, 
-        tti.time_start, 
-        tti.time_end, 
+        CONCAT(tti.time_start, ' - ', tti.time_end) as study_time,
         td.day_name,
         tc.class_name,
         tt.name as teacher
@@ -183,8 +181,7 @@ function listScheduleClass({Class, search, orderby, order, index, len}, callback
                     ts.schedule_id,
                     tti.time_id,
                     tst.study_name, 
-                    tti.time_start, 
-                    tti.time_end, 
+                    CONCAT(tti.time_start, ' - ', tti.time_end) as study_time,
                     td.day_name,
                     tc.class_name,
                     tt.name as teacher
@@ -202,9 +199,8 @@ function listScheduleClass({Class, search, orderby, order, index, len}, callback
         query = `SELECT 
                     ts.schedule_id,
                     tti.time_id,
-                    tst.study_name, 
-                    tti.time_start, 
-                    tti.time_end, 
+                    tst.study_name,
+                    CONCAT(tti.time_start, ' - ', tti.time_end) as study_time,
                     td.day_name,
                     tc.class_name,
                     tt.name as teacher

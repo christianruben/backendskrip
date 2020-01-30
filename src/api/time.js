@@ -29,6 +29,23 @@ route.get('/', verifyToken, (req, res)=>{
     }
 });
 
+route.get('/light', verifyToken, (req, res)=>{
+    let search = req.query.search;
+    let data_rows = [];
+
+    model_time.listLightTime({search: search}, (result)=>{
+        if(result.err){
+            data_rows = [];
+        }else{
+            let arr = JSON.parse(JSON.stringify(result.res));
+            arr.forEach(element => {
+                data_rows.push({value: `${element.time} - ${element.time_name}`, id: element.time_id});
+            });
+        }
+        return res.status(200).send({response: data_rows});
+    })
+});
+
 route.post('/', verifyToken, (req, res)=>{
     if(req.admin){
         let name = req.body.name;

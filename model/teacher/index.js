@@ -134,7 +134,7 @@ function listTeacher({search, orderby, order, index, len}, callback){
         let src = `%${search.trim()}%`;
         connection.poolSelect(`SELECT ${selectField}, tu.picture, DATE_FORMAT(born_date, "%Y-%m-%d") as dateborn FROM tbl_teacher as tt INNER JOIN tbl_user as tu ON tt.teacher_id = tu.owner_id WHERE NIP LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`,[src, src, src, src, src], callback);
     }else{
-        connection.poolSelect(`SELECT ${selectField}, tu.picture, DATE_FORMAT(born_date, "%Y-%m-%d") as dateborn FROM tbl_teacher as tt INNER JOIN tbl_user as tu ON tt.teacher_id = tu.owner_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.poolSelect(`SELECT ${selectField}, tu.picture, DATE_FORMAT(born_date, "%Y-%m-%d") as dateborn FROM tbl_teacher as tt INNER JOIN tbl_user as tu ON tt.teacher_id = tu.owner_id ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
     }
 }
 

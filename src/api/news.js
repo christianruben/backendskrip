@@ -17,7 +17,7 @@ route.get('/', verifyToken, (req, res, next)=>{
             return res.status(500).send({response: null, message: result.err.message})
         }
         data_rows = result.res;
-        model_news.getAllRows(search_query, (result)=>{
+        model_news.getAllRows(search, (result)=>{
             if(result.err){
                 return res.status(500).send({response: null, message: result.err.message})
             }

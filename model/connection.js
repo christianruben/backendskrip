@@ -49,7 +49,6 @@ async function poolSelect(query, value, callback){
     try{
         const promisePool = pool.promise();
         const [res, field] = await promisePool.query(query, value);
-        console.log(res);
         result.res = res;
         result.field = field;
     }catch(err){
@@ -63,6 +62,7 @@ async function poolManipulate(query, value, callback){
         res: null,
         err: null
     }
+    console.log(query)
     try{
         const promisePool = pool.promise();
         const [res] = await promisePool.query(query, value);

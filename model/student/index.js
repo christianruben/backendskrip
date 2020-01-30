@@ -135,18 +135,18 @@ function deleteStudent({id}, callback){
 function listClassStudent({classid, search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.poolSelect(`SELECT ${selectField}, DATE_FORMAT(ts.born_date, "%Y-%m-%d") as dateborn, tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id WHERE class_id = ? name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [classid, src,src,src,src,src,src,src], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id WHERE class_id = ? name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [classid, src,src,src,src,src,src,src], callback);
     }else{
-        connection.poolSelect(`SELECT ${selectField}, DATE_FORMAT(ts.born_date, "%Y-%m-%d") as dateborn, tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id WHERE class_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [classid], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id WHERE class_id = ? ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [classid], callback);
     }
 }
 
 function listStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.poolSelect(`SELECT ${selectField}, DATE_FORMAT(ts.born_date, "%Y-%m-%d") as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
     }else{
-        connection.poolSelect(`SELECT ${selectField}, DATE_FORMAT(ts.born_date, "%Y-%m-%d") as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 

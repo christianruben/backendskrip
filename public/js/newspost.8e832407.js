@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["newspost"],{"37d3":function(t,e,n){"use strict";n.r(e);var s=function(){var t=this,e=t.$createElement,n=t._self._c||e;return n("div",[t._v(" Post ")])},o=[],c={mounted:function(){this.$store.dispatch("header/switchOff")}},i=c,u=n("2877"),r=Object(u["a"])(i,s,o,!1,null,null,null);e["default"]=r.exports}}]);
+//# sourceMappingURL=newspost.8e832407.js.map

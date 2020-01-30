@@ -29,6 +29,23 @@ route.get('/', verifyToken, (req, res)=>{
     }
 });
 
+route.get('/light', verifyToken, (req, res)=>{
+    let search = req.query.search;
+    let data_rows = [];
+
+    model_class.listLightTime({search: search}, (result)=>{
+        if(result.err){
+            data_rows = [];
+        }else{
+            let arr = JSON.parse(JSON.stringify(result.res));
+            arr.forEach(element => {
+                data_rows.push({value: `${element.class_name}`, id: element.class_id});
+            });
+        }
+        return res.status(200).send({response: data_rows});
+    })
+});
+
 route.get('/all', verifyToken, (req, res)=>{
     if(!req.admin){
         return res.status(500).send({response: null, message: 'Failed to authenticate token.'});

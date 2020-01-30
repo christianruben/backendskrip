@@ -61,9 +61,25 @@ function updateNews({id,title, content}, callback){
 function listNews({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.poolSelect(`SELECT * FROM tbl_news WHERE title LIKE ? OR content LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src],callback);
+        connection.poolSelect(`SELECT
+                                tn.title,
+                                DATE_FORMAT(tn.datecreated, "%Y-%m-%d") as date_written,
+                                tn.writer,
+                                ta.username,
+                                tn.content
+                                    FROM tbl_news AS tn
+                                        INNER JOIN tbl_admin AS ta ON ta.admin_id = tn.writer
+                                            WHERE title LIKE ? OR content LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src, src],callback);
     }else{
-        connection.poolSelect(`SELECT * FROM tbl_news ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.poolSelect(`SELECT
+        tn.title,
+        DATE_FORMAT(tn.datecreated, "%Y-%m-%d") as date_written,
+        tn.writer,
+        ta.username,
+        tn.content
+            FROM tbl_news AS tn
+                INNER JOIN tbl_admin AS ta ON ta.admin_id = tn.writer
+                    ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [index, len], callback);
     }
 }
 

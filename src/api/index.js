@@ -11,6 +11,8 @@ const teacher = require('./teacher');
 const classes = require('./classes');
 const time = require('./time');
 const room = require('./room');
+const department = require('./department');
+const semester = require('./semester');
 
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
@@ -25,5 +27,7 @@ router.use('/teacher', teacher);
 router.use('/class', classes);
 router.use('/root', room);
 router.use('/time', time);
+router.use('/department', department);
+router.use('/semester', semester);
 
 module.exports = router;

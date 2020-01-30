@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["admin~656cf501"],{"3c19":function(n,e,t){"use strict";t.r(e);var a=function(){var n=this,e=n.$createElement,t=n._self._c||e;return t("v-container",[n._v(" Admin ")])},c=[],i={},r=i,l=t("2877"),o=t("6544"),u=t.n(o),s=t("a523"),p=Object(l["a"])(r,a,c,!1,null,null,null);e["default"]=p.exports;u()(p,{VContainer:s["a"]})}}]);
+//# sourceMappingURL=admin~656cf501.f50d1848.js.map

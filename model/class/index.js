@@ -80,12 +80,31 @@ function loadAll(callback){
     connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY class_id ASC`, [], callback);
 }
 
+function listLightClass({search}, callback){
+    let src = `%${search.trim()}%`;
+    connection.poolSelect(`SELECT class_id, class_name FROM tbl_class WHERE class_name LIKE ? ORDER BY class_id ASC`,[src], callback);
+}
+
 function listClass({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${inde},${len}`, [src], callback);
+        connection.poolSelect(`SELECT 
+                                tc.class_name, 
+                                tc.class_id, 
+                                td.department_name,
+                                tc.department_id 
+                                    FROM tbl_class as tc 
+                                        INNER JOIN tbl_department as td ON tc.department_id = td.department_id
+                                            WHERE class_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src], callback);
     }else{
-        connection.poolSelect(`SELECT class_name, class_id, department_id FROM tbl_class ORDER BY ${orderby} ${order} LIMIT ?,?`, [index, len], callback);
+        connection.poolSelect(`SELECT 
+                                tc.class_name, 
+                                tc.class_id, 
+                                td.department_name,
+                                tc.department_id 
+                                    FROM tbl_class as tc
+                                        INNER JOIN tbl_department as td ON tc.department_id = td.department_id
+                                            ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
     }
 }
 

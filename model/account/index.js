@@ -26,7 +26,6 @@ function createAccount({idowner, level, username, password, picture}, callback){
             }else{
                 connection.poolManipulate('INSERT INTO tbl_user(owner_id, level, username, password, picture, datecreated) VALUES(?, ?, ?, ?, ?, ?)', [idowner, level, username, hashpass, picture, datenow], (res)=> {
                     
-        console.log(res);
                     if(res.err){
                         result = {
                             status: -1,
@@ -59,7 +58,8 @@ function Auth(username, password, callback){
         status: 0,
         err: "akun tidak dapat di temukan"
     }
-    connection.poolSelect('SELECT * FROM tbl_tbl_user WHERE username = ?', [username], (res)=>{
+    connection.poolSelect('SELECT * FROM tbl_user WHERE username = ?', [username], (res)=>{
+        console.log(res.err);
         if(res.err){
             result = {
                 status: -1,

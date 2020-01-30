@@ -93,4 +93,8 @@ function getDetailReportByStudent({teacher_id, semester_id, class_id, student_id
 module.exports = {
     createReport,
     getReportByStudentId,
+    getListReportPerSemester,
+    getListReportPerClass,
+    getListReportPerStudent,
+    getDetailReportByStudent
 };
