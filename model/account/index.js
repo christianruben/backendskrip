@@ -13,16 +13,18 @@ function createAccount({idowner, level, username, password, picture}, callback){
         status: 0,
         err: "Username yang dimasukan sudah terdaftar"
     }
-    connection.poolSelect(`SELECT user_id FROM tbl_user WHERE username = ?`, [username], (res)=>{
+    connection.poolSelect(`SELECT user_id FROM tbl_user WHERE username = ? AND level = ?`, [username, level], (res)=>{
         if(res.err){
             result = {
                 status: -1,
                 err: "Terjadi kesalahan pada server"
             }
+            console.log(result);
             callback(result);
         }else{
             if(res.res.length > 0){
                 callback(result);
+                console.log(result);
             }else{
                 connection.poolManipulate('INSERT INTO tbl_user(owner_id, level, username, password, picture, datecreated) VALUES(?, ?, ?, ?, ?, ?)', [idowner, level, username, hashpass, picture, datenow], (res)=> {
                     
@@ -32,6 +34,7 @@ function createAccount({idowner, level, username, password, picture}, callback){
                             err: "Terjadi kesalahan pada server"
                         }
                         callback(result);
+                        console.log(result);
                     }else{
                         if(res.res.affectedRows > 0){
                             result = {
@@ -39,12 +42,14 @@ function createAccount({idowner, level, username, password, picture}, callback){
                                 err: null
                             }
                             callback(result);
+                            console.log(result);
                         }else{
                             result = {
                                 status: 0,
                                 err: "Terjadi kesalahan, data tidak berhasil disimpan"
                             }
                             callback(result);
+                            console.log(result);
                         }
                     }
                 });

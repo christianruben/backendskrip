@@ -33,7 +33,7 @@ route.get('/light', verifyToken, (req, res)=>{
     let search = req.query.search;
     let data_rows = [];
 
-    model_class.listLightTime({search: search}, (result)=>{
+    model_class.listLightClass({search: search}, (result)=>{
         if(result.err){
             data_rows = [];
         }else{

@@ -46,6 +46,7 @@ async function poolSelect(query, value, callback){
         field: null,
         err: null
     }
+    console.log(query)
     try{
         const promisePool = pool.promise();
         const [res, field] = await promisePool.query(query, value);

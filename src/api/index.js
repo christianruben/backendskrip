@@ -13,6 +13,7 @@ const time = require('./time');
 const room = require('./room');
 const department = require('./department');
 const semester = require('./semester');
+const day = require('./day');
 
 router.use(bodyParser.urlencoded({extended: true}));
 router.use(bodyParser.json());
@@ -29,5 +30,6 @@ router.use('/root', room);
 router.use('/time', time);
 router.use('/department', department);
 router.use('/semester', semester);
+router.use('/day', day);
 
 module.exports = router;

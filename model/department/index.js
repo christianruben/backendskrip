@@ -1,12 +1,13 @@
 const connection = require('../connection');
 const util = require('../../util');
 
-function createDays({day_name}, callback){
+function createDepartment({department_name}, callback){
+    let datenow = util.getDateNow();
     let result = {
         status: 0,
-        err: "Terjadi kesalahan, hari tidak tersimpan"
+        err: "Terjadi kesalahan, jurusan tidak tersimpan"
     }
-    connection.poolManipulate(`INSERT INTO tbl_day(day_name) VALUES(?)`, [day_name], (res)=>{
+    connection.poolManipulate(`INSERT INTO tbl_department(department_name, datecreated) VALUES(?, ?)`, [department_name, datenow], (res)=>{
         if(res.err){
             result = {
                 status: -1,
@@ -27,12 +28,12 @@ function createDays({day_name}, callback){
     });
 }
 
-function updateDays({days_id, day_name}, callback){
+function updateDepartment({department_id, department_name}, callback){
     let result = {
         status: 0,
-        err: "Terjadi kesalahan, hari tidak tersimpan"
+        err: "Terjadi kesalahan, jurusan tidak terperbaharui"
     }
-    connection.poolManipulate(`UPDATE tbl_day SET day_name = ? WHERE day_id = ?`, [day_name, days_id], (res)=>{
+    connection.poolManipulate(`UPDATE tbl_department SET department_name = ? WHERE department_id = ?`, [department_name, department_id], (res)=>{
         if(res.err){
             result = {
                 status: -1,
@@ -53,12 +54,12 @@ function updateDays({days_id, day_name}, callback){
     });
 }
 
-function deleteDays({id}, callback){
+function deleteDepartment({id}, callback){
     let result = {
         status: 0,
-        err: "Terjadi kesalahan, gagal menghapus hari"
+        err: "Terjadi kesalahan, gagal menghapus jurusan"
     }
-    connection.poolManipulate(`DELETE FROM tbl_day WHERE day_id IN(?)`, [id], (res)=>{
+    connection.poolManipulate(`DELETE FROM tbl_department WHERE department_id IN(?)`, [id], (res)=>{
         if(res.err){
             result = {
                 status: -1,
@@ -80,37 +81,38 @@ function deleteDays({id}, callback){
 }
 
 function getAllList(callback){
-    connection.poolSelect(`SELECT * FROM tbl_day ORDER BY day_id ASC`, [], callback);
+    connection.poolSelect(`SELECT * FROM tbl_department ORDER BY department_id ASC`, [], callback);
 }
 
-function listLightDay({search}, callback){
+function listLightDepartment({search}, callback){
     let src = `%${search.trim()}%`;
-    connection.poolSelect(`SELECT day_id, day_name FROM tbl_day WHERE day_name COLLATE utf8_general_ci LIKE ? ORDER BY day_id ASC`,[src], callback);
+    connection.poolSelect(`SELECT department_id, department_name FROM tbl_department WHERE department_name COLLATE utf8_general_ci LIKE ? ORDER BY department_id ASC`,[src], callback);
 }
 
-function dayList({search, orderby, order, index, len}, callback){
+function departmentList({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.poolSelect(`SELECT * FROM tbl_day WHERE day_name COLLATE utf8_general_ci LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src], callback);
+        connection.poolSelect(`SELECT * FROM tbl_department WHERE department_name COLLATE utf8_general_ci LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src], callback);
     }else{
-        connection.poolSelect(`SELECT * FROM tbl_day ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
+        connection.poolSelect(`SELECT * FROM tbl_department ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [], callback);
     }
 }
 
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.poolSelect(`SELECT count(*) as countall FROM tbl_day WHERE day_name COLLATE utf8_general_ci LIKE ? `, [src], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_department WHERE department_name COLLATE utf8_general_ci LIKE ? `, [src], callback);
     }else{
-        connection.poolSelect(`SELECT count(*) as countall FROM tbl_day`, [], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_department`, [], callback);
     }
 }
+
 module.exports = {
-    createDays,
-    updateDays,
-    deleteDays,
-    dayList,
-    getAllRows,
-    listLightDay,
-    getAllList
+    createDepartment,
+    updateDepartment,
+    deleteDepartment,
+    listLightDepartment,
+    departmentList,
+    getAllList,
+    getAllRows
 }

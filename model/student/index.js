@@ -107,11 +107,12 @@ function updateStudent({id, nis, name, gender, religion, born_place, born_date, 
 }
 
 function deleteStudent({id}, callback){
+    console.log(id);
     let result = {
         status: 0,
         err: "Terjadi kesalahan, gagal menghapus"
     }
-    connection.poolManipulate(`DELETE FROM tbl_student WHERE student_id IN(?)`, [id], (res)=>{
+    connection.poolManipulate(`DELETE FROM tbl_student WHERE student_id = ?`, [id], (res)=>{
         if(res.err){
             result = {
                 status: -1,
@@ -144,18 +145,18 @@ function listClassStudent({classid, search, orderby, order, index, len}, callbac
 function listStudent({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         let src = `%${search}%`;
-        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.owner_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? AND tu.level = 1 ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [src,src,src,src,src,src,src], callback);
     }else{
-        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.user_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
+        connection.poolSelect(`SELECT ${selectField}, SUBSTRING(ts.born_date, 1, 10) as dateborn, tu.picture, tc.class_name, tc.class_id, tc.department_id FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.owner_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE tu.level = 1 ORDER BY ${orderby} ${order} LIMIT  ${index},${len}`, [], callback);
     }
 }
 
 function getAllRows(search, callback){
     if(search.trim().length > 0){
         let src = `%${search.trim()}%`;
-        connection.poolSelect(`SELECT count(*) as countall FROM tbl_student WHERE NIS LIKE ? OR name LIKE ? OR born_place LIKE ? OR address LIKE ? OR phone_number LIKE ?`, [src, src, src, src, src], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.owner_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE name LIKE ? OR religion LIKE ? OR born_place LIKE ? OR father_name LIKE ? OR mother_name LIKE ? OR address LIKE ? OR phone_number LIKE ? AND tu.level = 1`, [src, src, src, src, src], callback);
     }else{
-        connection.poolSelect(`SELECT count(*) as countall FROM tbl_student`, [], callback);
+        connection.poolSelect(`SELECT count(*) as countall FROM tbl_student as ts INNER JOIN tbl_user as tu ON ts.student_id = tu.owner_id INNER JOIN tbl_class as tc ON ts.class_id = tc.class_id WHERE tu.level = 1`, [], callback);
     }
 }
 

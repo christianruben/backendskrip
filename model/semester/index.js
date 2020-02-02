@@ -53,11 +53,16 @@ function deleteSemester({id}, callback){
     });
 }
 
+function listLightSemester({search}, callback){
+    let src = `%${search.trim()}%`;
+    connection.poolSelect(`SELECT semester_id, semester_name FROM tbl_semester WHERE semester_name COLLATE utf8_general_ci LIKE ? ORDER BY semester_id ASC`,[src], callback);
+}
+
 function getAllList(callback){
     connection.poolSelect(`SELECT * FROM tbl_semester ORDER BY semester_id ASC`, [], callback);
 }
 
-function listSemester({search, orderby, order, index, len}, callback){
+function semesterList({search, orderby, order, index, len}, callback){
     if(search.trim().length > 0){
         connection.poolSelect(`SELECT * FROM tbl_semester WHERE semester_name LIKE ? ORDER BY ${orderby} ${order} LIMIT ${index},${len}`, [search.trim()], callback);
     }else{
@@ -103,8 +108,8 @@ module.exports = {
     createSemester,
     deleteSemester,
     updateSemester,
-    listSemester,
+    semesterList,
     getAllList,
-    getAllRows
-},
-getAllRow
+    getAllRows,
+    listLightSemester
+}

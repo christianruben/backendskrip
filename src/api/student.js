@@ -79,7 +79,7 @@ route.get('/class/:id', verifyToken, (req, res, next)=>{
 route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
     // create student data
     if(req.admin){
-        let filename = null;
+        let filename = "";
         if(req.file){
             filename = req.file.filename;
         }
@@ -117,8 +117,15 @@ route.post('/', verifyToken, upload.single('imgusr'), (req, res, next)=>{
                                 return res.status(500).send({data: false, message: response.err});
                             }
                         });
+                    }else{
+                        model_student.deleteStudent({id: response.userid}, response=>{
+                            if(response.status == 1){
+                                return res.status(200).send({data: true, message: null});
+                            }else{
+                                return res.status(500).send({data: false, message: response.err});
+                            }
+                        })
                     }
-                    return res.status(200).send({data: true, message: null});
                 }else{
                     return res.status(500).send({data: false, message: response.err});
                 }
@@ -142,7 +149,6 @@ route.delete('/', verifyToken, (req, res, next)=>{
                         return res.status(500).send({data: false, message: response.err});
                     }
                 });
-                return res.status(200).send({data: true, message: null});
             }else{
                 return res.status(500).send({data: false, message: response.err});
             }
